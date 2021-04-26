@@ -1,0 +1,17 @@
+package limit
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestLimit(t *testing.T) {
+	limit := NewLimit(1)
+	limit.Borrow()
+	assert.True(t, limit.TryBorrow())
+	assert.False(t, limit.TryBorrow())
+	assert.Nil(t, limit.Return())
+	assert.Nil(t, limit.Return())
+	assert.Equal(t, ErrLimitReturn, limit.Return())
+}

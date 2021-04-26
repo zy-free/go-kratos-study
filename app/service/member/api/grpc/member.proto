@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package grpc;
+
+service MemberRPC {
+    // member
+    rpc GetMemberByID (GetMemberByIDReq) returns (MemberResp);
+    rpc GetMemberByPhone (GetMemberByPhoneReq) returns (MemberResp);
+    rpc GetMemberMaxAge (GetMemberMaxAgeReq) returns (GetMemberMaxAgeResp);
+    rpc CountMember (CountMemberReq) returns (CountMemberResp);
+    rpc ListMember (ListMemberReq) returns (ListMemberResp);
+    rpc QueryMemberByName (QueryMemberByNameReq) returns (QueryMemberByNameResp);
+    rpc QueryMemberByIDs (QueryMemberByIDsReq) returns (QueryMemberByIDsResp);
+    rpc AddMember (AddMemberReq) returns (IDResp);
+    rpc BatchAddMember (BatchAddMemberReq) returns (BatchAddMemberResp);
+    rpc InitMember (InitMemberReq) returns (EmptyResp);
+    rpc DeleteMember (DeleteMemberReq) returns (EmptyResp);
+    rpc SetMember (SetMemberReq) returns (EmptyResp);
+    rpc UpdateMember (UpdateMemberReq) returns (EmptyResp);
+    rpc SortMember (SortMemberReq) returns (EmptyResp);
+
+    // test
+    rpc ErrorTest (EmptyReq) returns (EmptyResp);
+    rpc MetadataTest (EmptyReq) returns (EmptyResp);
+
+    // favorite
+    rpc AddFavorite (AddFavoriteReq) returns (IDResp);
+
+}
+
+message Member {
+    int64 id = 1;
+    string phone = 2;
+    string name = 3;
+    int64 age = 4;
+    string address = 5;
+    int64 orderNum = 6;
+    int64 created_at = 7;
+    int64 updated_at = 8;
+}
+
+message GetMemberByIDReq {
+    int64 id = 1;
+}
+
+message MemberResp {
+    Member member = 1;
+}
+
+message GetMemberByPhoneReq {
+    string phone = 1;
+}
+
+message GetMemberMaxAgeReq {
+}
+
+message GetMemberMaxAgeResp {
+    int64 age = 1;
+}
+message QueryMemberByNameReq {
+    string name = 1;
+}
+
+message QueryMemberByNameResp {
+    repeated Member list = 1;
+}
+
+message CountMemberReq {
+}
+
+message CountMemberResp {
+    int64 count = 1;
+}
+
+message ListMemberReq {
+}
+
+message ListMemberResp {
+    repeated Member list = 1;
+}
+
+message QueryMemberByIDsReq {
+    repeated int64 ids = 1;
+}
+
+message QueryMemberByIDsResp {
+    map<int64, Member> list = 1;
+}
+
+message AddMemberReq {
+    string phone = 1;
+    string name = 2;
+    int64 age = 3;
+    string address = 4;
+}
+
+message BatchAddMemberReq {
+    repeated AddMemberReq addMemberReq = 1;
+}
+
+message BatchAddMemberResp {
+    int64 affectRow = 1;
+}
+
+message InitMemberReq {
+    string phone = 1;
+    string name = 2;
+    int64 age = 3;
+    string address = 4;
+}
+message IDResp {
+    int64 id = 1;
+}
+
+message DeleteMemberReq {
+    int64 id = 1;
+}
+
+message EmptyReq {
+
+}
+message EmptyResp {
+
+}
+
+message SetMemberReq {
+    int64 id = 1;
+    string phone = 2;
+    string name = 3;
+    int64 age = 4;
+    string address = 5;
+}
+
+message UpdateMemberReq {
+    int64 id = 1;
+    string phone = 2;
+    string name = 3;
+    int64 age = 4;
+    string address = 5;
+}
+
+message SortMember {
+    int64 id = 1;
+    int64 orderNum = 2;
+}
+
+message SortMemberReq {
+    repeated SortMember sortMember = 1;
+}
+
+message AddFavoriteReq {
+    int64 mid = 1;
+    string name = 2;
+}

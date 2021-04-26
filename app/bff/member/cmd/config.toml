@@ -1,0 +1,9 @@
+[Log]
+  dir = "/data/log/member/"
+  stdout = true
+[HTTPServer]
+    addr = "127.0.0.1:8000"
+    maxListen = 1000
+    timeout = "10s"
+    readTimeout = "5s"
+    writeTimeout = "5s"
