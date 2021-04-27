@@ -10,7 +10,6 @@
     - [ ] trace(zip)
     - [ ] limit(根据cpu自适应限流，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
         - 压测
-    - [ ] break(自适应熔断，google sre算法)
     - [ ] promethues监控
 
     
