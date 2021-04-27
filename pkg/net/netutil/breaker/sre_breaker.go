@@ -1,13 +1,13 @@
 package breaker
 
 import (
+	"go-kartos-study/pkg/ecode"
 	"math"
 	"math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	"go-kartos-study/pkg/ecode"
 	"go-kartos-study/pkg/log"
 	"go-kartos-study/pkg/stat/metric"
 )

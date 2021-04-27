@@ -82,6 +82,7 @@ func route(e *bm.Engine) {
 			testGroup.GET("/maxConnTest", maxConnTest)
 			testGroup.GET("/traceTest", traceTest)
 			testGroup.GET("/metadataTest", metadataTest)
+			testGroup.GET("/breakerTest", breakerTest)
 		}
 	}
 }

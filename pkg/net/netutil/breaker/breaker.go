@@ -71,7 +71,7 @@ var (
 	_mu   sync.RWMutex
 	_conf = &Config{
 		Window:  xtime.Duration(3 * time.Second),
-		Bucket:  10,
+		Bucket:  20,
 		Request: 100,
 
 		// Percentage of failures must be lower than 33.33%
