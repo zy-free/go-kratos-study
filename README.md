@@ -27,7 +27,7 @@
     
 - demo
     - [ ] admin+gorm(share db架构,运营平台微服务共享db)
-    - [ ] service+sql
+    - [ ] service+sql+mysql
     - [ ] job+Beanstalkd
     - [ ] 数据库delete_time 为null的时间处理，自定义时间
     - [ ] 多租户 （流量染色）
@@ -37,11 +37,16 @@
     - [ ] 获取天气的等api的demo，client以及分层设计
     - [x] metadata
     - [x] grpcerror
-    - [ ] validate
+    - [x] validate
+    - [x] default标签改写，之前json格式时不生效
+    - [x] default
     - [ ] timeout
     - [x] 贫血模型
-    - [ ] 流量染色
-    - [ ] csv导出
+    - [x] csv导出
+    - [x] breaker
+    - [ ] redis分布式锁
+    - [ ] redis分布式限流
+    - [ ] redis漏桶限流
     
     
 - [x]  pkg/errors处理指南

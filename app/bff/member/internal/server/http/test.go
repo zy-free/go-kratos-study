@@ -26,3 +26,7 @@ func traceTest(c *bm.Context) {
 func metadataTest(c *bm.Context) {
 	c.JSON(nil, testSvc.MetadataErrorTest(c))
 }
+
+func breakerTest(c *bm.Context) {
+	c.JSON(nil, testSvc.BreakerTest(c))
+}

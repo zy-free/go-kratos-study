@@ -260,7 +260,7 @@ func (c *Context) CSV(csv CSVMsg, err error) {
 	*/
 	writeStatusCode(c.Writer, bcode.Code())
 	header := c.Writer.Header()
-	header.Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.csv",csv.Title))
+	header.Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.csv", csv.Title))
 
 	c.Render(code, render.CSV{
 		Title:   csv.Title,
@@ -274,12 +274,11 @@ func (c *Context) JSON(data interface{}, err error) {
 	code := http.StatusOK
 	c.Error = err
 	bcode := ecode.Cause(err)
-	// TODO app allow 5xx?
-	/*
-		if bcode.Code() == -500 {
-			code = http.StatusServiceUnavailable
-		}
-	*/
+
+	// change http status code
+	if bcode.Code() > 0 && bcode.Code() <= ecode.LimitExceed.Code() {
+		code = bcode.Code()
+	}
 	writeStatusCode(c.Writer, bcode.Code())
 	c.Render(code, render.JSON{
 		Code:    bcode.Code(),
