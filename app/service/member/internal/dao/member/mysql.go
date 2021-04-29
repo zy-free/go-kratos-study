@@ -22,7 +22,7 @@ func memberHit(id int64) string {
 	return fmt.Sprintf("member_%d", id%_shard)
 }
 
-func (dao *Dao) InitMember(ctx context.Context, arg *model.Member) (err error) {
+func (dao *Dao) dbInitMember(ctx context.Context, arg *model.Member) (err error) {
 	_sql := `insert ignore into member (phone,name,age,address) VALUES(?,?,?,?)`
 	if _, err = dao.db.Exec(ctx, _sql, arg.Phone, arg.Name, arg.Age, arg.Address); err != nil {
 		return errors.Wrapf(err, "InitMember arg(%v)", arg)
@@ -31,7 +31,7 @@ func (dao *Dao) InitMember(ctx context.Context, arg *model.Member) (err error) {
 }
 
 // 创建单个
-func (dao *Dao) AddMember(ctx context.Context, arg *model.Member) (id int64, err error) {
+func (dao *Dao) dbAddMember(ctx context.Context, arg *model.Member) (id int64, err error) {
 	_sql := `INSERT INTO member (phone,name,age,address) VALUES(?,?,?,?)`
 	result, err := dao.db.Exec(ctx, _sql, arg.Phone, arg.Name, arg.Age, arg.Address)
 	if err != nil {
@@ -43,7 +43,7 @@ func (dao *Dao) AddMember(ctx context.Context, arg *model.Member) (id int64, err
 }
 
 // 批量创建
-func (dao *Dao) BatchAddMember(ctx context.Context, args []*model.Member) (affectRow int64, err error) {
+func (dao *Dao) dbBatchAddMember(ctx context.Context, args []*model.Member) (affectRow int64, err error) {
 	_sql := `INSERT INTO member (phone,name,age,address) VALUES `
 	var valueString []string
 	var valueArgs []interface{}
@@ -60,7 +60,7 @@ func (dao *Dao) BatchAddMember(ctx context.Context, args []*model.Member) (affec
 }
 
 // 根据id查询单个
-func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
+func (dao *Dao) dbGetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
 	m = &model.Member{}
 	_sql := `SELECT id,phone,name,age,address FROM member WHERE id = ? AND deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql, id).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address); err != nil {
@@ -70,7 +70,7 @@ func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (m *model.Member, e
 }
 
 // 根据phone查询单个
-func (dao *Dao) GetMemberByPhone(ctx context.Context, phone string) (m *model.Member, err error) {
+func (dao *Dao) dbGetMemberByPhone(ctx context.Context, phone string) (m *model.Member, err error) {
 	m = &model.Member{}
 	_sql := `SELECT id,phone,name,age,address FROM member WHERE phone = ? AND deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql, phone).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address); err != nil {
@@ -84,7 +84,7 @@ func (dao *Dao) GetMemberByPhone(ctx context.Context, phone string) (m *model.Me
 }
 
 
-func (dao *Dao) GetMemberMaxAge(ctx context.Context) (age int64, err error) {
+func (dao *Dao) dbGetMemberMaxAge(ctx context.Context) (age int64, err error) {
 	_sql := `SELECT IFNULL(MAX(age),0) FROM member WHERE deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&age); err != nil {
 		return 0, errors.Wrapf(err, "GetMemberMaxAge")
@@ -92,7 +92,7 @@ func (dao *Dao) GetMemberMaxAge(ctx context.Context) (age int64, err error) {
 	return
 }
 
-func (dao *Dao) GetMemberSumAge(ctx context.Context) (age int64, err error) {
+func (dao *Dao) dbGetMemberSumAge(ctx context.Context) (age int64, err error) {
 	_sql := `SELECT IFNULL(SUM(age),0) FROM member WHERE  deleted_at is null  `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&age); err != nil {
 		return 0, errors.Wrapf(err, "GetMemberMaxAge")
@@ -100,7 +100,7 @@ func (dao *Dao) GetMemberSumAge(ctx context.Context) (age int64, err error) {
 	return
 }
 
-func (dao *Dao) CountMember(ctx context.Context) (count int64, err error) {
+func (dao *Dao) dbCountMember(ctx context.Context) (count int64, err error) {
 	_sql := `SELECT COUNT(*) FROM member where  deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&count); err != nil {
 		return 0, errors.Wrapf(err, "CountMember")
@@ -108,7 +108,7 @@ func (dao *Dao) CountMember(ctx context.Context) (count int64, err error) {
 	return
 }
 
-func (dao *Dao) ListMember(ctx context.Context) (res []*model.Member, err error) {
+func (dao *Dao) dbListMember(ctx context.Context) (res []*model.Member, err error) {
 	res = make([]*model.Member, 0, 0) // 返回nil还是空切片会影响json里的结构
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE  deleted_at is null "
 	rows, err := dao.db.Query(ctx, _sql,)
@@ -129,7 +129,7 @@ func (dao *Dao) ListMember(ctx context.Context) (res []*model.Member, err error)
 	return
 }
 
-func (dao *Dao) HasMemberByID(ctx context.Context, id int64) (has bool, err error) {
+func (dao *Dao) dbHasMemberByID(ctx context.Context, id int64) (has bool, err error) {
 	var count int
 	_sql := `SELECT COUNT(*) FROM member WHERE id = ?  AND deleted_at is null  `
 	err = dao.db.QueryRow(ctx, _sql, id).Scan(&count)
@@ -144,7 +144,7 @@ func (dao *Dao) HasMemberByID(ctx context.Context, id int64) (has bool, err erro
 }
 
 // 根据其他属性查询列表
-func (dao *Dao) QueryMemberByName(ctx context.Context, name string) (res []*model.Member, err error) {
+func (dao *Dao) dbQueryMemberByName(ctx context.Context, name string) (res []*model.Member, err error) {
 	res = make([]*model.Member, 0, 0) // 返回nil还是空切片会影响json里的结构
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE name = ? AND deleted_at is null "
 	rows, err := dao.db.Query(ctx, _sql, name)
@@ -166,7 +166,7 @@ func (dao *Dao) QueryMemberByName(ctx context.Context, name string) (res []*mode
 }
 
 // 根据ids查询列表
-func (dao *Dao) QueryMemberByIDs(ctx context.Context, ids []int64) (res map[int64]*model.Member, err error) {
+func (dao *Dao) dbQueryMemberByIDs(ctx context.Context, ids []int64) (res map[int64]*model.Member, err error) {
 	res = make(map[int64]*model.Member)
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE id IN (" + xstr.JoinInts(ids) + ") AND deleted_at is null "
 	rows, err := dao.db.Query(ctx, _sql)
@@ -189,7 +189,7 @@ func (dao *Dao) QueryMemberByIDs(ctx context.Context, ids []int64) (res map[int6
 
 
 // 更新单个
-func (dao *Dao) UpdateMember(ctx context.Context, member *model.Member) (err error) {
+func (dao *Dao) dbUpdateMember(ctx context.Context, member *model.Member) (err error) {
 	_sql := "UPDATE member SET  "
 	sqlSli := []string{}
 	var updateMap []interface{}
@@ -219,7 +219,7 @@ func (dao *Dao) UpdateMember(ctx context.Context, member *model.Member) (err err
 }
 
 // 更新或创建
-func (dao *Dao) SetMember(ctx context.Context, arg *model.Member) (err error) {
+func (dao *Dao) dbSetMember(ctx context.Context, arg *model.Member) (err error) {
 	_sql := "INSERT INTO member (id,phone,name,age,address) VALUES (?,?,?,?,?) " +
 		"ON DUPLICATE KEY UPDATE phone=?,name=?,age=?,address=?"
 	if _, err = dao.db.Exec(ctx, _sql, arg.Id, arg.Phone, arg.Name, arg.Age, arg.Address, arg.Phone, arg.Name, arg.Age, arg.Address); err != nil {
@@ -229,7 +229,7 @@ func (dao *Dao) SetMember(ctx context.Context, arg *model.Member) (err error) {
 }
 
 // 批量更改顺序
-func (dao *Dao) SortMember(ctx context.Context, args model.ArgMemberSort) (err error) {
+func (dao *Dao) dbSortMember(ctx context.Context, args model.ArgMemberSort) (err error) {
 	var (
 		buf bytes.Buffer
 		ids []int64
@@ -253,7 +253,7 @@ func (dao *Dao) SortMember(ctx context.Context, args model.ArgMemberSort) (err e
 
 
 // 删除
-func (dao *Dao) DeleteMember(ctx context.Context, id int64) (err error) {
+func (dao *Dao) dbDeleteMember(ctx context.Context, id int64) (err error) {
 	now := time.Now()
 	_sql := `UPDATE member SET deleted_at = ? WHERE id = ?`
 	if _, err = dao.db.Exec(ctx, _sql, now, id); err != nil {

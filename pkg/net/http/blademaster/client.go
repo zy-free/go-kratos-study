@@ -13,7 +13,6 @@ import (
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -133,11 +132,12 @@ func (client *Client) SetConfig(c *ClientConfig) {
 
 // NewRequest new http request with method, uri, ip, values and headers.
 // TODO(zhoujiahui): param realIP should be removed later.
-func (client *Client) NewRequest(method, uri, realIP string, params url.Values) (req *xhttp.Request, err error) {
+func (client *Client) NewRequest(method, uri, realIP string,body interface{}) (req *xhttp.Request, err error) {
 	if method == xhttp.MethodGet {
-		req, err = xhttp.NewRequest(xhttp.MethodGet, fmt.Sprintf("%s?%s", uri, params.Encode()), nil)
+		req, err = xhttp.NewRequest(xhttp.MethodGet, uri, nil)
 	} else {
-		req, err = xhttp.NewRequest(xhttp.MethodPost, uri, strings.NewReader(params.Encode()))
+		b,_:= json.Marshal(body)
+		req, err = xhttp.NewRequest(xhttp.MethodPost, uri, bytes.NewBuffer(b))
 	}
 	if err != nil {
 		err = pkgerr.Wrapf(err, "method:%s,uri:%s", method, uri)
@@ -145,7 +145,7 @@ func (client *Client) NewRequest(method, uri, realIP string, params url.Values) 
 	}
 	const (
 		_contentType = "Content-Type"
-		_urlencoded  = "application/x-www-form-urlencoded"
+		_urlencoded  = "application/json"
 		_userAgent   = "User-Agent"
 	)
 	if method == xhttp.MethodPost {
@@ -159,8 +159,8 @@ func (client *Client) NewRequest(method, uri, realIP string, params url.Values) 
 }
 
 // Get issues a GET to the specified URL.
-func (client *Client) Get(c context.Context, uri, ip string, params url.Values, res interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodGet, uri, ip, params)
+func (client *Client) Get(c context.Context, uri, ip string, body interface{}, res interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodGet, uri, ip, body)
 	if err != nil {
 		return
 	}
@@ -168,8 +168,8 @@ func (client *Client) Get(c context.Context, uri, ip string, params url.Values, 
 }
 
 // Post issues a Post to the specified URL.
-func (client *Client) Post(c context.Context, uri, ip string, params url.Values, res interface{}) (err error) {
-	req, err := client.NewRequest(xhttp.MethodPost, uri, ip, params)
+func (client *Client) Post(c context.Context, uri, ip string, body interface{}, res interface{}) (err error) {
+	req, err := client.NewRequest(xhttp.MethodPost, uri, ip, body)
 	if err != nil {
 		return
 	}

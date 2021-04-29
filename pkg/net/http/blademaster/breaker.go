@@ -16,13 +16,13 @@ func Breaker() HandlerFunc {
 		if err := brk.Allow(); err != nil {
 			log.Error("blademaster beaker ejected with code %d", http.StatusServiceUnavailable)
 			c.AbortWithStatus(http.StatusServiceUnavailable)
-			return 
+			return
 		}
-		defer func(){
+		defer func() {
 			err := c.Error
-			if ecode.Cause(err) != ecode.OK{
+			if ecode.Cause(err) != ecode.OK {
 				brk.MarkFailed()
-			}else{
+			} else {
 				brk.MarkSuccess()
 			}
 		}()

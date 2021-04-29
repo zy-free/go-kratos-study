@@ -3,6 +3,7 @@ package favorite
 import (
 	"context"
 	"go-kartos-study/app/service/member/conf"
+	"go-kartos-study/app/service/member/internal/model"
 	"go-kartos-study/pkg/database/sql"
 )
 
@@ -35,6 +36,7 @@ func (d *Dao) Ping(c context.Context) (err error) {
 	return d.db.Ping(c)
 }
 
-func (d * Dao) GetMemberByID(c context.Context,id int64){
-	//d.db.
+
+func (dao *Dao) GetFavoriteByID(ctx context.Context, id int64) (m *model.Favorite, err error) {
+	return dao.dbGetFavoriteByID(ctx,id)
 }

@@ -4,6 +4,18 @@
 [HTTPServer]
     addr = "127.0.0.1:8000"
     maxListen = 1000
-    timeout = "10s"
+    timeout = "3s"
     readTimeout = "5s"
     writeTimeout = "5s"
+
+[httpClient]
+    dial = "2s"
+    timeout = "100s"
+    keepAlive = "60s"
+    [httpClient.breaker]
+        window  = "3s"
+        bucket  = 10
+        request = 100
+        k = 1.5
+
+
