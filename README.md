@@ -39,8 +39,11 @@
     - [x] 获取天气的等api的demo，client以及分层设计
     - [x] mysql慢日志，熔断
     - [x] redis慢日志，无熔断(不支持集群)
-    - [x] redis的demo，读失败后的写缓存策略（降级后一般读失败不触发回写缓存），空缓存保护策略。
-
+    - [ ] redis的demo，读失败后的写缓存策略（降级后一般读失败不触发回写缓存）。
+    - [ ] 空缓存保护策略,将空数据缓存，避免请求直接打到db
+    - [x] chan-singleFlight
+    - [x] chan-fanout
+    - [x] chan-pipeline
     - [ ] redis分布式锁(架构上尽量规避，性能不高，case多，容易出bug)
     - [ ] redis令牌桶限流
     - [ ] redis漏桶限流
@@ -53,9 +56,6 @@
     - [x] breaker(google sre 熔断器)
     - [x] 多租户 （流量染色）
     - [ ] kafka
-    - [x] chan-singleFlight
-    - [x] chan-fanout
-    - [ ] chan-pipeline
     - [ ] hash-id封装
 
     
