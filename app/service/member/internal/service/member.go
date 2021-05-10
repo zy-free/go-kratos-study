@@ -2,10 +2,20 @@ package service
 
 import (
 	"context"
+	"github.com/davecgh/go-spew/spew"
 	"go-kartos-study/app/service/member/internal/model"
+	"go-kartos-study/pkg/sync/pipeline"
+	"strconv"
 )
 
 func (s *Service) GetMemberByID(ctx context.Context,id int64) (member *model.Member, err error) {
+	// test
+	s.addMerge(ctx,1,1)
+	s.addMerge(ctx,2,4)
+	s.addMerge(ctx,1,2)
+	s.addMerge(ctx,1,3)
+	s.addMerge(ctx,2,3)
+	s.addMerge(ctx,3,15)
 	return s.memDao.GetMemberByID(ctx,id)
 }
 
@@ -34,7 +44,13 @@ func (s *Service) QueryMemberByIDs(ctx context.Context,ids []int64) (res map[int
 }
 
 func (s *Service) AddMember(ctx context.Context,member *model.Member) (id int64, err error) {
-	return s.memDao.AddMember(ctx,member)
+	id,err =  s.memDao.AddMember(ctx,member)
+	if err != nil {
+		return
+	}
+	member.Id = id
+	s.memDao.KafkaPushMember(ctx,member)
+	return
 }
 
 func (s *Service) BatchAddMember(ctx context.Context,members []*model.Member) (affectRow int64, err error) {
@@ -59,4 +75,33 @@ func (s *Service) SortMember(ctx context.Context,args model.ArgMemberSort) (err 
 
 func (s *Service) DelMember(ctx context.Context,id int64) (err error) {
 	return s.memDao.DeleteMember(ctx,id)
+}
+
+
+func (s *Service) addMerge(c context.Context, mid, kid int64) {
+	s.merge.Add(c, strconv.FormatInt(mid, 10), &model.Merge{
+		Mid:  mid,
+		Kid:  kid,
+	})
+}
+
+func (s *Service) initMerge() {
+	s.merge = pipeline.NewPipeline(s.c.Merge)
+	s.merge.Split = func(a string) int {
+		n, _ := strconv.Atoi(a)
+		return n
+	}
+	s.merge.Do = func(c context.Context, ch int, values map[string][]interface{}) {
+		merges := make(map[string][]*model.Merge)
+		for k, vs := range values {
+			for _, v := range vs {
+				merges[k] = append(merges[k], v.(*model.Merge))
+			}
+		}
+		spew.Dump("merge start:",values)
+		//log.Info("merges:%v" ,merges)
+		// demo 数据库操作最终入库
+		//s.dao.AddHistoryMessage(c, ch, merges)
+	}
+	s.merge.Start()
 }

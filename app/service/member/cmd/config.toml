@@ -19,9 +19,29 @@
     ratio = 0.5
     request = 100
 
+[redis]
+	name = "member-service"
+	proto = "tcp"
+	addr = "127.0.0.1:6379"
+	idle = 10
+	active = 10
+	dialTimeout = "1s"
+	readTimeout = "1s"
+	writeTimeout = "1s"
+	idleTimeout = "10s"
+[merge]
+	MaxSize = 100
+	Interval = "1s"
+	Buffer = 1024
+	# 线上要大于100 不然partion 分布不均
+	Worker = 100
+	Sync = false
+[KafkaPublish]
+    topic = "red_packet_data_topic"
+    brokers =["10.10.8.16:9092"]
 
 [ETCDConfig]
     Endpoints = ["127.0.0.1:2379"]
 
 [GRPCServer]
-    Addr = "127.0.0.1:9002"
+    Addr = "127.0.0.1:9004"

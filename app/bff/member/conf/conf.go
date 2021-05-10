@@ -24,6 +24,9 @@ type Config struct {
 	Tracer     *trace.Config
 
 	MemberClient *warden.ClientConfig
+
+	HTTPClient *bm.ClientConfig
+
 }
 
 // Init init conf

@@ -44,7 +44,7 @@ func Init(c *conf.Config) {
 func metadataMiddleware() bm.HandlerFunc {
 	return func(c *bm.Context) {
 		// more metadata from gateway,this just test
-		c.Context = nmd.NewContext(c.Context, nmd.MD{nmd.Mid: "4", nmd.Color: "green2"})
+		c.Context = nmd.NewContext(c.Context, nmd.MD{nmd.Mid: "4", nmd.Color: "test"})
 		c.Next()
 	}
 }
@@ -74,6 +74,7 @@ func route(e *bm.Engine) {
 		favGroup := g.Group("/favorites")
 		{
 			favGroup.POST("/", addFavorite)
+			favGroup.GET("/info/getById", getFavoriteByID)
 		}
 
 		testGroup := g.Group("/test")
@@ -83,6 +84,11 @@ func route(e *bm.Engine) {
 			testGroup.GET("/traceTest", traceTest)
 			testGroup.GET("/metadataTest", metadataTest)
 			testGroup.GET("/breakerTest", breakerTest)
+			testGroup.GET("/errGroupTest", errGroupTest)
+			testGroup.GET("/errGroupWithCancelTest", errGroupWithCancelTest)
+			testGroup.GET("/goSafeTest", goSafeTest)
+			testGroup.GET("/httpClientTest", httpClientTest)
+			testGroup.GET("/cancelTest", cancelTest)
 		}
 	}
 }

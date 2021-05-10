@@ -44,9 +44,9 @@ func Logger() HandlerFunc {
 		if err != nil {
 			errmsg = err.Error()
 			lf = log.Errorv
-			if cerr.Code() > 0 {
-				lf = log.Warnv
-			}
+			//if cerr.Code() > 0 {
+			//	lf = log.Warnv
+			//}
 		} else {
 			if isSlow {
 				lf = log.Warnv

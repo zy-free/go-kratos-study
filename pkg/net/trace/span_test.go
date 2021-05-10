@@ -24,8 +24,11 @@ func TestSpan(t *testing.T) {
 		assert.Equal(t, sp1.context.SpanID, sp2.context.ParentID)
 		t.Run("test max fork", func(t *testing.T) {
 			sp3 := sp2.Fork("xx", "xxx")
+			fmt.Println(sp3)
 			for i := 0; i < 100; i++ {
 				sp3 = sp3.Fork("", "xxx")
+				fmt.Println(sp3)
+
 			}
 			assert.Equal(t, noopspan{}, sp3)
 		})

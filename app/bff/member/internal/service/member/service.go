@@ -2,6 +2,8 @@ package member
 
 import (
 	"context"
+	"fmt"
+	"github.com/pkg/errors"
 	"go-kartos-study/app/bff/member/conf"
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/app/service/member/api/grpc"
@@ -177,8 +179,9 @@ func (s *Service) AddMember(ctx context.Context, req *model.AddMemberReq) (resul
 		Age:     req.Age,
 		Address: req.Address,
 	})
+
 	if err != nil {
-		return nil, ecode.ErrInsert
+		return nil, errors.WithMessage(ecode.ErrInsert, fmt.Sprintf("memRpc.Addmember:(%v)",err))
 	}
 	result = &model.AddMemberResp{
 		ID: resp.Id,

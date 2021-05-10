@@ -116,6 +116,7 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 			p      peer.Peer
 		)
 		var ec ecode.Codes = ecode.OK
+
 		// apm tracing
 		if t, ok = trace.FromContext(ctx); ok {
 			t = t.Fork("", method)
@@ -125,6 +126,7 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 		// setup metadata
 		gmd = baseMetadata()
 		trace.Inject(t, trace.GRPCFormat, gmd)
+
 		c.mutex.RLock()
 		if conf, ok = c.conf.Method[method]; !ok {
 			conf = c.conf
@@ -158,10 +160,12 @@ func (c *Client) handle() grpc.UnaryClientInterceptor {
 				}
 			},
 			nmd.IsOutgoingKey)
+
 		// merge with old matadata if exists
 		if oldmd, ok := metadata.FromOutgoingContext(ctx); ok {
 			gmd = metadata.Join(gmd, oldmd)
 		}
+
 		ctx = metadata.NewOutgoingContext(ctx, gmd)
 
 		opts = append(opts, grpc.Peer(&p))

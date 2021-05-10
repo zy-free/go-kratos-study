@@ -88,6 +88,7 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 			cancel func()
 			addr   string
 		)
+
 		s.mutex.RLock()
 		conf := s.conf
 		s.mutex.RUnlock()
@@ -118,6 +119,7 @@ func (s *Server) handle() grpc.UnaryServerInterceptor {
 				}
 			}
 		}
+
 		if t == nil {
 			t = trace.New(args.FullMethod)
 		} else {

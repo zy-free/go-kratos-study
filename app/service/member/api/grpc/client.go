@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"go-kartos-study/app/service/member/conf"
+	"go-kartos-study/app/service/member/appid"
 	"go-kartos-study/pkg/net/rpc/warden"
 
 	"google.golang.org/grpc"
@@ -15,7 +15,7 @@ func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (MemberRPCClie
 	//if err != nil {
 	//	panic(err)
 	//}
-	cc, err := warden.NewClient(cfg, opts...).Dial(context.Background(), fmt.Sprintf("etcd://default/%s", conf.AppID))
+	cc, err := warden.NewClient(cfg, opts...).Dial(context.Background(), fmt.Sprintf("etcd://default/%s", appid.AppID))
 	if err != nil {
 		return nil, err
 	}
