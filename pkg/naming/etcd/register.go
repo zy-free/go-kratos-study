@@ -23,10 +23,11 @@ func ETCDRegist(conf *ETCDConfig, appID string, port string, color string) (canc
 	ins := &naming.Instance{
 		AppID: appID,
 		Addrs: []string{
+			// todo
 			//"grpc://" + ip.InternalIP() + ":" + port,
 			"grpc://" + "127.0.0.1" + ":" + port,
 		},
-		Metadata: map[string]string{"color": color},
+		Metadata: map[string]string{"color": color,"mirror":""},
 		Hostname: hn + uuid.New().String(),
 	}
 	cancel, err = dis.Register(context.Background(), ins)

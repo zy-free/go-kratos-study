@@ -6,7 +6,6 @@ import (
 
 // ErrLimitReturn indicates that the more than borrowed elements were returned.
 var ErrLimitReturn = errors.New("discarding limited token, resource pool is full, someone returned multiple times")
-var Placeholder = struct {}{}
 // Limit controls the concurrent requests.
 type Limit struct {
 	pool chan struct{}

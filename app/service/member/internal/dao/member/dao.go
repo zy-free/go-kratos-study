@@ -2,23 +2,37 @@ package member
 
 import (
 	"context"
+	"fmt"
 	"go-kartos-study/app/service/member/conf"
 	"go-kartos-study/app/service/member/internal/model"
+	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/database/sql"
+	"go-kartos-study/pkg/log"
+	"go-kartos-study/pkg/queue/kafka"
+	"go-kartos-study/pkg/stat/prom"
+	"go-kartos-study/pkg/sync/pipeline/fanout"
+	"golang.org/x/sync/singleflight"
 )
 
 // Dao is redis dao.
 type Dao struct {
-	c *conf.Config
-	// db
-	db *sql.DB
+	c                 *conf.Config
+	db                *sql.DB
+	redis             *redis.Pool
+	cacheSingleFlight *singleflight.Group
+	cache             *fanout.Fanout
+	publisher         kafka.Publisher
 }
 
 // New new a dao.
 func New(c *conf.Config) (d *Dao) {
 	d = &Dao{
-		c:  c,
-		db: sql.NewMySQL(c.Mysql),
+		c:                 c,
+		db:                sql.NewMySQL(c.Mysql),
+		redis:             redis.NewPool(c.Redis),
+		cacheSingleFlight: &singleflight.Group{},
+		cache:             fanout.New("cache", fanout.Worker(1), fanout.Buffer(1024)),
+		publisher:         kafka.NewPublisher(c.KafkaPublish),
 	}
 	return d
 }
@@ -47,8 +61,34 @@ func (dao *Dao) BatchAddMember(ctx context.Context, args []*model.Member) (affec
 	return dao.dbBatchAddMember(ctx, args)
 }
 
+// todo pipeline
+
 func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
-	return dao.dbGetMemberByID(ctx, id)
+	m, err = dao.cacheGetMember(ctx, id)
+	if m != nil && err == nil {
+		prom.CacheHit.Incr("member")
+		return
+	}
+	// XXX m == nil RowNotFound
+	var rr interface{}
+	// 压测即可发现 同时会有很多访问，但是db只有一条，防止击穿
+	log.Info("cacheSingleFlight.Do test")
+	rr, err, _ = dao.cacheSingleFlight.Do(fmt.Sprintf("m_%d", id), func() (r interface{}, e error) {
+		prom.CacheMiss.Incr("member test")
+		log.Info("dbGetMemberByID")
+		r, e = dao.dbGetMemberByID(ctx, id)
+		return
+	})
+
+	if err != nil {
+		return
+	}
+	m = rr.(*model.Member)
+	// fanout模式
+	dao.cache.Do(ctx, func(ctx context.Context) {
+		_ = dao.cacheSetMember(ctx, id, m)
+	})
+	return
 }
 
 func (dao *Dao) GetMemberByPhone(ctx context.Context, phone string) (m *model.Member, err error) {

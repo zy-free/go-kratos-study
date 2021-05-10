@@ -2,18 +2,15 @@ package conf
 
 import (
 	"flag"
+	"github.com/BurntSushi/toml"
+	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/database/sql"
 	"go-kartos-study/pkg/log"
 	"go-kartos-study/pkg/naming/etcd"
 	"go-kartos-study/pkg/net/rpc/warden"
 	"go-kartos-study/pkg/net/trace"
-
-	"github.com/BurntSushi/toml"
-)
-
-const(
-	AppID = "member.service"
-	Color = ""
+	kafka "go-kartos-study/pkg/queue/kafka"
+	"go-kartos-study/pkg/sync/pipeline"
 )
 
 // global var
@@ -27,15 +24,21 @@ var (
 type Config struct {
 	Log    *log.Config
 	Tracer *trace.Config
-	Mysql *sql.Config
+	Mysql  *sql.Config
+	Redis  *redis.Config
+	Merge  *pipeline.Config
+	KafkaPublish  *kafka.PublishConfig
+
 	GRPCServer *warden.ServerConfig
 	ETCDConfig *etcd.ETCDConfig
 }
 
+func init() {
+	flag.StringVar(&confPath, "conf", "./app/service/member/cmd/config.toml", "default config path")
+}
 
 // Init init conf
 func Init() error {
-	flag.StringVar(&confPath, "conf", "./app/service/member/cmd/config.toml", "default config path")
 	if confPath != "" {
 		return local()
 	}

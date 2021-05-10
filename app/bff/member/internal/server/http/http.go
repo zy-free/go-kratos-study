@@ -44,7 +44,7 @@ func Init(c *conf.Config) {
 func metadataMiddleware() bm.HandlerFunc {
 	return func(c *bm.Context) {
 		// more metadata from gateway,this just test
-		c.Context = nmd.NewContext(c.Context, nmd.MD{nmd.Mid: "4", nmd.Color: "green2"})
+		c.Context = nmd.NewContext(c.Context, nmd.MD{nmd.Mid: "4", nmd.Color: "test"})
 		c.Next()
 	}
 }

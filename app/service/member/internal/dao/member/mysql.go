@@ -25,7 +25,7 @@ func memberHit(id int64) string {
 func (dao *Dao) dbInitMember(ctx context.Context, arg *model.Member) (err error) {
 	_sql := `insert ignore into member (phone,name,age,address) VALUES(?,?,?,?)`
 	if _, err = dao.db.Exec(ctx, _sql, arg.Phone, arg.Name, arg.Age, arg.Address); err != nil {
-		return errors.Wrapf(err, "InitMember arg(%v)", arg)
+		return errors.WithMessagef(err, "InitMember arg(%v)", arg)
 	}
 	return
 }
@@ -35,7 +35,7 @@ func (dao *Dao) dbAddMember(ctx context.Context, arg *model.Member) (id int64, e
 	_sql := `INSERT INTO member (phone,name,age,address) VALUES(?,?,?,?)`
 	result, err := dao.db.Exec(ctx, _sql, arg.Phone, arg.Name, arg.Age, arg.Address)
 	if err != nil {
-		return 0, errors.Wrapf(err, "AddMember arg(%v)", arg)
+		return 0, errors.WithMessagef(err, "AddMember arg(%v)", arg)
 	}
 
 	id, _ = result.LastInsertId()
@@ -53,7 +53,7 @@ func (dao *Dao) dbBatchAddMember(ctx context.Context, args []*model.Member) (aff
 	}
 	result, err := dao.db.Exec(ctx, _sql+strings.Join(valueString, ","), valueArgs...)
 	if err != nil {
-		return 0, errors.Wrapf(err, "BatchAddMember arg(%v)", args)
+		return 0, errors.WithMessagef(err, "BatchAddMember arg(%v)", args)
 	}
 	affectRow, _ = result.RowsAffected()
 	return
@@ -64,7 +64,7 @@ func (dao *Dao) dbGetMemberByID(ctx context.Context, id int64) (m *model.Member,
 	m = &model.Member{}
 	_sql := `SELECT id,phone,name,age,address FROM member WHERE id = ? AND deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql, id).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address); err != nil {
-		return nil, errors.Wrapf(err, "GetMemberByID id(%d)", id)
+		return nil, errors.WithMessagef(err, "GetMemberByID id(%d)", id)
 	}
 	return
 }
@@ -77,7 +77,7 @@ func (dao *Dao) dbGetMemberByPhone(ctx context.Context, phone string) (m *model.
 		if err == sql.ErrNoRows {
 			err = nil
 		} else {
-			return nil, errors.Wrapf(err, "GetMemberByPhone phone(%s)", phone)
+			return nil, errors.WithMessagef(err, "GetMemberByPhone phone(%s)", phone)
 		}
 	}
 	return
@@ -87,7 +87,7 @@ func (dao *Dao) dbGetMemberByPhone(ctx context.Context, phone string) (m *model.
 func (dao *Dao) dbGetMemberMaxAge(ctx context.Context) (age int64, err error) {
 	_sql := `SELECT IFNULL(MAX(age),0) FROM member WHERE deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&age); err != nil {
-		return 0, errors.Wrapf(err, "GetMemberMaxAge")
+		return 0, errors.WithMessagef(err, "GetMemberMaxAge")
 	}
 	return
 }
@@ -95,7 +95,7 @@ func (dao *Dao) dbGetMemberMaxAge(ctx context.Context) (age int64, err error) {
 func (dao *Dao) dbGetMemberSumAge(ctx context.Context) (age int64, err error) {
 	_sql := `SELECT IFNULL(SUM(age),0) FROM member WHERE  deleted_at is null  `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&age); err != nil {
-		return 0, errors.Wrapf(err, "GetMemberMaxAge")
+		return 0, errors.WithMessagef(err, "GetMemberMaxAge")
 	}
 	return
 }
@@ -103,7 +103,7 @@ func (dao *Dao) dbGetMemberSumAge(ctx context.Context) (age int64, err error) {
 func (dao *Dao) dbCountMember(ctx context.Context) (count int64, err error) {
 	_sql := `SELECT COUNT(*) FROM member where  deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql).Scan(&count); err != nil {
-		return 0, errors.Wrapf(err, "CountMember")
+		return 0, errors.WithMessagef(err, "CountMember")
 	}
 	return
 }
@@ -111,20 +111,21 @@ func (dao *Dao) dbCountMember(ctx context.Context) (count int64, err error) {
 func (dao *Dao) dbListMember(ctx context.Context) (res []*model.Member, err error) {
 	res = make([]*model.Member, 0, 0) // 返回nil还是空切片会影响json里的结构
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE  deleted_at is null "
-	rows, err := dao.db.Query(ctx, _sql,)
+	rows, err := dao.db.Query(ctx, _sql)
 	if err != nil {
-		return res, errors.Wrapf(err, "ListMember ")
+		return res, errors.WithMessagef(err, "ListMember ")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		n := &model.Member{}
 		if err = rows.Scan(&n.Id, &n.Phone, &n.Name, &n.Age, &n.Address); err != nil {
-			err = errors.Wrapf(err, "d.db.Scan(%s)")
+			err = errors.WithMessagef(err, "d.db.Scan(%s)")
 			return
 		}
 		res = append(res, n)
 	}
 	if err = rows.Err(); err != nil {
-		err = errors.Wrapf(err, "rows.Err(%s)")
+		err = errors.WithMessagef(err, "rows.Err(%s)")
 	}
 	return
 }
@@ -138,7 +139,7 @@ func (dao *Dao) dbHasMemberByID(ctx context.Context, id int64) (has bool, err er
 			err = nil
 			return
 		}
-		return false, errors.Wrapf(err, "HasMemberByID id(%d)", id)
+		return false, errors.WithMessagef(err, "HasMemberByID id(%d)", id)
 	}
 	return count > 0, nil
 }
@@ -149,18 +150,18 @@ func (dao *Dao) dbQueryMemberByName(ctx context.Context, name string) (res []*mo
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE name = ? AND deleted_at is null "
 	rows, err := dao.db.Query(ctx, _sql, name)
 	if err != nil {
-		return res, errors.Wrapf(err, "QueryMemberByName name(%s)", name)
+		return res, errors.WithMessagef(err, "QueryMemberByName name(%s)", name)
 	}
 	for rows.Next() {
 		n := &model.Member{}
 		if err = rows.Scan(&n.Id, &n.Phone, &n.Name, &n.Age, &n.Address); err != nil {
-			err = errors.Wrapf(err, "d.db.Scan(%s)", name)
+			err = errors.WithMessagef(err, "d.db.Scan(%s)", name)
 			return
 		}
 		res = append(res, n)
 	}
 	if err = rows.Err(); err != nil {
-		err = errors.Wrapf(err, "rows.Err(%s)", name)
+		err = errors.WithMessagef(err, "rows.Err(%s)", name)
 	}
 	return
 }
@@ -171,18 +172,18 @@ func (dao *Dao) dbQueryMemberByIDs(ctx context.Context, ids []int64) (res map[in
 	_sql := "SELECT id,phone,name,age,address FROM member WHERE id IN (" + xstr.JoinInts(ids) + ") AND deleted_at is null "
 	rows, err := dao.db.Query(ctx, _sql)
 	if err != nil {
-		return res, errors.Wrapf(err, "QueryMemberByIDs name(%s)", ids)
+		return res, errors.WithMessagef(err, "QueryMemberByIDs name(%s)", ids)
 	}
 	for rows.Next() {
 		n := &model.Member{}
 		if err = rows.Scan(&n.Id, &n.Phone, &n.Name, &n.Age, &n.Address); err != nil {
-			err = errors.Wrapf(err, "d.db.Scan(%s)", ids)
+			err = errors.WithMessagef(err, "d.db.Scan(%s)", ids)
 			return
 		}
 		res[n.Id] = n
 	}
 	if err = rows.Err(); err != nil {
-		err = errors.Wrapf(err, "rows.Err(%s)", ids)
+		err = errors.WithMessagef(err, "rows.Err(%s)", ids)
 	}
 	return
 }
@@ -213,7 +214,7 @@ func (dao *Dao) dbUpdateMember(ctx context.Context, member *model.Member) (err e
 	_sql += strings.Join(sqlSli, ",") + " WHERE id =?"
 	updateMap = append(updateMap, member.Id)
 	if _, err = dao.db.Exec(ctx, _sql, updateMap...); err != nil {
-		return errors.Wrapf(err, "Update arg(%v)", updateMap)
+		return errors.WithMessagef(err, "Update arg(%v)", updateMap)
 	}
 	return
 }
@@ -223,7 +224,7 @@ func (dao *Dao) dbSetMember(ctx context.Context, arg *model.Member) (err error) 
 	_sql := "INSERT INTO member (id,phone,name,age,address) VALUES (?,?,?,?,?) " +
 		"ON DUPLICATE KEY UPDATE phone=?,name=?,age=?,address=?"
 	if _, err = dao.db.Exec(ctx, _sql, arg.Id, arg.Phone, arg.Name, arg.Age, arg.Address, arg.Phone, arg.Name, arg.Age, arg.Address); err != nil {
-		return errors.Wrapf(err, "SetMember arg(%v)", arg)
+		return errors.WithMessagef(err, "SetMember arg(%v)", arg)
 	}
 	return
 }
@@ -246,7 +247,7 @@ func (dao *Dao) dbSortMember(ctx context.Context, args model.ArgMemberSort) (err
 	buf.WriteString(xstr.JoinInts(ids))
 	buf.WriteString(")")
 	if _, err = dao.db.Exec(ctx, buf.String()); err != nil {
-		return errors.Wrapf(err, "BatchUpdateMemberOrder args(%v)", args)
+		return errors.WithMessagef(err, "BatchUpdateMemberOrder args(%v)", args)
 	}
 	return
 }
@@ -257,7 +258,7 @@ func (dao *Dao) dbDeleteMember(ctx context.Context, id int64) (err error) {
 	now := time.Now()
 	_sql := `UPDATE member SET deleted_at = ? WHERE id = ?`
 	if _, err = dao.db.Exec(ctx, _sql, now, id); err != nil {
-		return errors.Wrapf(err, "DeleteMember id(%d)", id)
+		return errors.WithMessagef(err, "DeleteMember id(%d)", id)
 	}
 	return
 }

@@ -66,7 +66,7 @@ func logFn(code int, dt time.Duration) func(context.Context, ...log.D) {
 		// TODO: slowlog make it configurable.
 		return log.Warnv
 	case code > 0:
-		return log.Warnv
+		return log.Errorv
 	}
 	return log.Infov
 }

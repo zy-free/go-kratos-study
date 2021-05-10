@@ -3,13 +3,16 @@ package main
 import (
 	"flag"
 	"github.com/davecgh/go-spew/spew"
+	"go-kartos-study/app/service/member/appid"
 	"go-kartos-study/app/service/member/conf"
 	"go-kartos-study/app/service/member/internal/server/grpc"
 	"go-kartos-study/app/service/member/internal/service"
+	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/naming/etcd"
 	"go-kartos-study/pkg/net/trace"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -32,7 +35,7 @@ func main() {
 	svc := service.New(conf.Conf)
 	grpc.New(conf.Conf.GRPCServer, svc)
 
-	cancel := etcd.ETCDRegist(conf.Conf.ETCDConfig, conf.AppID, "9002", conf.Color)
+	cancel := etcd.ETCDRegist(conf.Conf.ETCDConfig, appid.AppID, strings.Split(conf.Conf.GRPCServer.Addr, ":")[1], env.Color)
 	defer cancel()
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)

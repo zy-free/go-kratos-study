@@ -216,6 +216,7 @@ func (p *Pipeline) mergeproc(mirror bool, index int, ch <-chan *message) {
 		}
 		if !timer.Stop() && !timeout {
 			<-timer.C
+			<-timer.C
 			timeout = false
 		}
 		timer.Reset(time.Duration(p.config.Interval))
