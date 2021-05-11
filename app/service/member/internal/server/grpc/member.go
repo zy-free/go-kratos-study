@@ -134,12 +134,17 @@ func (s *Server) QueryMemberByIDs(ctx context.Context, req *grpc.QueryMemberByID
 	}, nil
 }
 func (s *Server) AddMember(ctx context.Context, req *grpc.AddMemberReq) (resp *grpc.IDResp, err error) {
-	id, err := s.svc.AddMember(ctx,&model.Member{
+
+	m := &model.Member{
 		Phone:   req.Phone,
 		Name:    req.Name,
 		Age:     req.Age,
 		Address: req.Address,
-	})
+	}
+	// 业务端不关心，一定做好转化 分割字段，Get返回字段时同理
+	//m.AttrSet(model.MemAttrPublic,req.Public)
+	//m.AttrSet(model.MemAttrLocked,req.Locked)
+	id, err := s.svc.AddMember(ctx,m)
 	if err != nil {
 		return nil, err
 	}

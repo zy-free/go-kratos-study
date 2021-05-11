@@ -32,6 +32,7 @@
     - [ ] canal，异步删除缓存
     - [x] service+mysql
     - [ ] job+kafka
+    - [x] kafka
     - [ ] Beanstalkd?
     - [x] 数据库delete_time 为null的时间处理，自定义时间
     - [x] errgroup
@@ -42,7 +43,7 @@
     - [ ] redis的demo，读失败后的写缓存策略（降级后一般读失败不触发回写缓存）。
     - [ ] 空缓存保护策略,将空数据缓存，避免请求直接打到db
     - [x] chan-singleFlight
-    - [x] chan-fanout
+    - [x] chan-fanout(生产消费模式：这里用作redis回写异步处理)
     - [x] chan-pipeline
     - [ ] redis分布式锁(架构上尽量规避，性能不高，case多，容易出bug)
     - [ ] redis令牌桶限流
@@ -55,8 +56,9 @@
     - [x] csv导出
     - [x] breaker(google sre 熔断器)
     - [x] 多租户 （流量染色）
-    - [ ] kafka
     - [ ] hash-id封装
+    - [ ] attrs(mysql字段，bit标识)
+    - [ ] redis(bitmap大offset处理)
 
     
     

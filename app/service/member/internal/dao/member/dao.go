@@ -127,6 +127,10 @@ func (dao *Dao) UpdateMember(ctx context.Context, member *model.Member) (err err
 	return dao.dbUpdateMember(ctx, member)
 }
 
+func (dao *Dao) UpdateMemberAttr(ctx context.Context, id int64,attr int32) (err error) {
+	return dao.dbUpdateMemberAttr(ctx, id,attr)
+}
+
 func (dao *Dao) SetMember(ctx context.Context, arg *model.Member) (err error) {
 	return dao.dbSetMember(ctx, arg)
 }

@@ -62,7 +62,7 @@ func (dao *Dao) dbBatchAddMember(ctx context.Context, args []*model.Member) (aff
 // 根据id查询单个
 func (dao *Dao) dbGetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
 	m = &model.Member{}
-	_sql := `SELECT id,phone,name,age,address FROM member WHERE id = ? AND deleted_at is null `
+	_sql := `SELECT id,phone,name,age,address,attr FROM member WHERE id = ? AND deleted_at is null `
 	if err = dao.db.QueryRow(ctx, _sql, id).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address); err != nil {
 		return nil, errors.WithMessagef(err, "GetMemberByID id(%d)", id)
 	}
@@ -82,7 +82,6 @@ func (dao *Dao) dbGetMemberByPhone(ctx context.Context, phone string) (m *model.
 	}
 	return
 }
-
 
 func (dao *Dao) dbGetMemberMaxAge(ctx context.Context) (age int64, err error) {
 	_sql := `SELECT IFNULL(MAX(age),0) FROM member WHERE deleted_at is null `
@@ -188,7 +187,6 @@ func (dao *Dao) dbQueryMemberByIDs(ctx context.Context, ids []int64) (res map[in
 	return
 }
 
-
 // 更新单个
 func (dao *Dao) dbUpdateMember(ctx context.Context, member *model.Member) (err error) {
 	_sql := "UPDATE member SET  "
@@ -229,6 +227,14 @@ func (dao *Dao) dbSetMember(ctx context.Context, arg *model.Member) (err error) 
 	return
 }
 
+func (dao *Dao) dbUpdateMemberAttr(ctx context.Context, id int64, attr int32) (err error) {
+	_sql := "UPDATE member SET attr = ? WHERE id = ? "
+	if _, err = dao.db.Exec(ctx, _sql, attr, id); err != nil {
+		return errors.WithMessagef(err, "dbUpdateMemberAttr id(%d) attr(%d)", id, attr)
+	}
+	return
+}
+
 // 批量更改顺序
 func (dao *Dao) dbSortMember(ctx context.Context, args model.ArgMemberSort) (err error) {
 	var (
@@ -251,7 +257,6 @@ func (dao *Dao) dbSortMember(ctx context.Context, args model.ArgMemberSort) (err
 	}
 	return
 }
-
 
 // 删除
 func (dao *Dao) dbDeleteMember(ctx context.Context, id int64) (err error) {
