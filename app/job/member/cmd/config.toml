@@ -1,0 +1,10 @@
+[Log]
+  dir = "/data/log/member/"
+  stdout = true
+
+[KafkaConsumer]
+    topic = "red_packet_data_topic"
+    brokers = ["10.10.8.16:9092"]
+    group = "member-job"
+
+

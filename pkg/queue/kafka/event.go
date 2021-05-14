@@ -22,9 +22,9 @@ type Publisher interface {
 	Close() error
 }
 
-// Subscriber is an absctraction for receiving messages
+// Consumer is an absctraction for receiving messages
 // from queue.
-type Subscriber interface {
-	Subscribe(ctx context.Context, h Handler) error
+type Consumer interface {
+	Consume(ctx context.Context, h Handler) error
 	Close() error
 }

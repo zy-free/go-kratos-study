@@ -25,12 +25,12 @@ var (
 //}
 
 func TestPublisher(t *testing.T) {
-	pub := NewPublisher(&Config{
+	pub := NewPublisher(&PublishConfig{
 		Topic:   testTopic,
 		Brokers: testBrokers,
 	})
 	defer pub.Close()
-	if err := pub.Publish(context.Background(), Event{Key: "key1", Payload: []byte("value12222")}); err != nil {
+	if err := pub.Publish(context.Background(), Event{Key: "key1", Payload: []byte("0514")}); err != nil {
 		t.Fatal(err)
 	}
 	time.Sleep(time.Second * 2)

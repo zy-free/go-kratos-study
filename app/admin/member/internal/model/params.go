@@ -45,6 +45,7 @@ type ListMemberResp struct {
 }
 
 type AddMemberReq struct {
+	ID      int64  `json:"id"`
 	Phone   string `json:"phone" validate:"required"`
 	Name    string `json:"name"`
 	Age     int64  `json:"age"`
@@ -54,18 +55,14 @@ type AddMemberReq struct {
 type AddMemberResp struct {
 	ID int64 `json:"id"`
 }
-type InitMemberReq struct {
-	Phone   string `json:"phone"`
-	Name    string `json:"name"`
-	Age     int64  `json:"age" default:"-1"`
-	Address string `json:"address,optional"`
-}
 
 type InitMemberResp struct {
 	ID int64 `json:"id"`
 }
 
-type BatchAddMemberReq []AddMemberReq
+type BatchAddMemberReq struct {
+	Args []*AddMemberReq
+}
 
 type UpdateMemberReq struct {
 	ID      int64  `json:"id"  validate:"required" default:"3"`
@@ -110,3 +107,9 @@ type AddFavoriteReq struct {
 type AddFavoriteResp struct {
 	ID int64 `json:"id"`
 }
+
+type MemberSort struct {
+	Id       int64 `db:"id"`
+	OrderNum int64 `db:"order_num"`
+}
+type ArgMemberSort []MemberSort

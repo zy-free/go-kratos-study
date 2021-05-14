@@ -11,6 +11,12 @@ import (
 
 const (
 	_memberKey     = "m:%d"
+	_memberLockKey     = "mlock:%d"
+	// key fb_mid/100000  offset => mid%100000
+	// bit value 1 mean unfaved; bit value 0 mean faved
+	// 为了避免单个 BITSET 过大或者热点，需要使用 region sharding
+	_favedBit = "fb_%d"
+	_bucket   = 100000
 	_defaultExpire = 600
 )
 
@@ -18,6 +24,13 @@ func keyMember(mid int64) string {
 	return fmt.Sprintf(_memberKey, mid)
 }
 
+func keyMemberLock(mid int64) string {
+	return fmt.Sprintf(_memberLockKey, mid)
+}
+
+func favedBitKey(mid int64) string {
+	return fmt.Sprintf(_favedBit, mid/_bucket)
+}
 
 func (dao *Dao) cacheGetMember(ctx context.Context, id int64) (m *model.Member, err error) {
 	var (
@@ -58,9 +71,37 @@ func (dao *Dao) cacheSetMember(ctx context.Context, id int64, m *model.Member) (
 	return
 }
 
-func (dao *Dao) cacheDelMember(c context.Context, id int64) (err error) {
-	conn := dao.redis.Get(c)
+func (dao *Dao) cacheDelMember(ctx context.Context, id int64) (err error) {
+	conn := dao.redis.Get(ctx)
 	defer conn.Close()
 	_, err = conn.Do("DEL", keyMember(id))
 	return
+}
+
+func (d *Dao) cacheFavedBit(ctx context.Context, mid int64) (err error) {
+	key := favedBitKey( mid)
+	offset := mid % _bucket
+	conn := d.redis.Get(ctx)
+	defer conn.Close()
+	if _, err = conn.Do("SETBIT", key, offset, 0); err != nil {
+		log.Error("conn.DO(SETBIT) key(%s) offset(%d) err(%v)", key, offset, err)
+	}
+	return
+}
+
+func (d *Dao) cacheUnFavedBit(ctx context.Context, mid int64) (err error) {
+	key := favedBitKey(mid)
+	offset := mid % _bucket
+	conn := d.redis.Get(ctx)
+	defer conn.Close()
+	if _, err = conn.Do("SETBIT", key, offset, 1); err != nil {
+		log.Error("conn.DO(SETBIT) key(%s) offset(%d) err(%v)", key, offset, err)
+	}
+	return
+}
+
+func (d *Dao) getMemberLock(ctx context.Context, mid int64) (lock *redis.RedisLock) {
+	key := keyMemberLock(mid)
+
+	return redis.NewMutex(d.redis,key,30)
 }

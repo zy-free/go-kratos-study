@@ -134,7 +134,6 @@ func (s *Server) QueryMemberByIDs(ctx context.Context, req *grpc.QueryMemberByID
 	}, nil
 }
 func (s *Server) AddMember(ctx context.Context, req *grpc.AddMemberReq) (resp *grpc.IDResp, err error) {
-
 	m := &model.Member{
 		Phone:   req.Phone,
 		Name:    req.Name,

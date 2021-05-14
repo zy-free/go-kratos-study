@@ -1,0 +1,24 @@
+[Log]
+  dir = "/data/log/member/"
+  stdout = true
+[HTTPServer]
+    addr = "127.0.0.1:8000"
+    maxListen = 1000
+    timeout = "3s"
+    readTimeout = "5s"
+    writeTimeout = "5s"
+
+[httpClient]
+    dial = "2s"
+    timeout = "100s"
+    keepAlive = "60s"
+    [httpClient.breaker]
+        window  = "3s"
+        bucket  = 10
+        request = 100
+        k = 1.5
+[orm]
+    dsn = "root:root@tcp(127.0.0.1:3306)/kartos_member?timeout=3s&readTimeout=3s&writeTimeout=3s&parseTime=true&loc=Local&charset=utf8,utf8mb4"
+    active = 5
+    idle = 5
+    idleTimeout = "4h"

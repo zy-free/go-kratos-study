@@ -63,7 +63,7 @@ func (dao *Dao) dbBatchAddMember(ctx context.Context, args []*model.Member) (aff
 func (dao *Dao) dbGetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
 	m = &model.Member{}
 	_sql := `SELECT id,phone,name,age,address,attr FROM member WHERE id = ? AND deleted_at is null `
-	if err = dao.db.QueryRow(ctx, _sql, id).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address); err != nil {
+	if err = dao.db.QueryRow(ctx, _sql, id).Scan(&m.Id, &m.Phone, &m.Name, &m.Age, &m.Address,&m.Attr); err != nil {
 		return nil, errors.WithMessagef(err, "GetMemberByID id(%d)", id)
 	}
 	return

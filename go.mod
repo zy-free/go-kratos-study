@@ -17,6 +17,7 @@ require (
 	github.com/go-kratos/kratos/v2 v2.0.0-beta4 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-playground/validator/v10 v10.5.0
+	github.com/go-redsync/redsync v1.4.2 // indirect
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/gogo/protobuf v1.3.2
@@ -26,6 +27,7 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.14.3 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	github.com/montanaflynn/stats v0.6.5
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin/zipkin-go v0.2.5
@@ -35,6 +37,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.15
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/sirupsen/logrus v1.8.1
+	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect

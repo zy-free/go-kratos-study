@@ -6,22 +6,22 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type subscriber struct {
+type consumer struct {
 	reader *kafka.Reader
 }
 
-// SubscriberOption is a subscriber option.
-type SubscriberOption func(*subscriber)
+// ConsumerOption is a consumer option.
+type ConsumerOption func(*consumer)
 
-type SubscribeConfig struct {
+type ConsumerConfig struct {
 	Topic string
 	Group string
 	Brokers []string
 }
 
-// NewSubscriber new a kafka subscriber.
-func NewSubscriber(conf *SubscribeConfig, opts ...SubscriberOption) Subscriber {
-	sub := &subscriber{}
+// NewConsumer new a kafka consumer.
+func NewConsumer(conf *ConsumerConfig, opts ...ConsumerOption) Consumer {
+	sub := &consumer{}
 	for _, o := range opts {
 		o(sub)
 	}
@@ -33,7 +33,7 @@ func NewSubscriber(conf *SubscribeConfig, opts ...SubscriberOption) Subscriber {
 	return sub
 }
 
-func (s *subscriber) Subscribe(ctx context.Context, h Handler) error {
+func (s *consumer) Consume(ctx context.Context, h Handler) error {
 	for {
 		msg, err := s.reader.FetchMessage(ctx)
 		if err != nil {
@@ -52,6 +52,6 @@ func (s *subscriber) Subscribe(ctx context.Context, h Handler) error {
 	}
 }
 
-func (s *subscriber) Close() error {
+func (s *consumer) Close() error {
 	return s.reader.Close()
 }

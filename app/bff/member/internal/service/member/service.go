@@ -8,6 +8,7 @@ import (
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/ecode"
+	"go-kartos-study/pkg/hashid"
 	strx "go-kartos-study/pkg/str"
 )
 
@@ -46,7 +47,7 @@ func (s *Service) GetMemberByID(ctx context.Context, arg *model.GetMemberByIDReq
 		return nil, ecode.ErrQuery
 	}
 	result = &model.GetMemberResp{Member: model.Member{
-		ID:        resp.Member.Id,
+		ID:        hashid.ID(resp.Member.Id),
 		Phone:     resp.Member.Phone,
 		Name:      resp.Member.Name,
 		Age:       resp.Member.Age,
@@ -65,7 +66,7 @@ func (s *Service) GetMemberByPhone(ctx context.Context, arg *model.GetMemberByPh
 		return nil, ecode.ErrQuery
 	}
 	result = &model.GetMemberResp{Member: model.Member{
-		ID:        resp.Member.Id,
+		ID:        hashid.ID(resp.Member.Id),
 		Phone:     resp.Member.Phone,
 		Name:      resp.Member.Name,
 		Age:       resp.Member.Age,
@@ -96,7 +97,7 @@ func (s *Service) QueryMemberByName(ctx context.Context, req *model.QueryMemberB
 	members := []model.Member{}
 	for _, v := range resp.List {
 		members = append(members, model.Member{
-			ID:        v.Id,
+			ID:        hashid.ID(v.Id),
 			Phone:     v.Phone,
 			Name:      v.Name,
 			Age:       v.Age,
@@ -122,10 +123,10 @@ func (s *Service) QueryMemberByIds(ctx context.Context, req *model.QueryMemberBy
 	if err != nil {
 		return nil, ecode.ErrQuery
 	}
-	list := make(map[int64]*model.Member)
+	list := make(map[ hashid.ID]*model.Member)
 	for k, v := range resp.List {
-		list[k] = &model.Member{
-			ID:        v.Id,
+		list[ hashid.ID(k)] = &model.Member{
+			ID:        hashid.ID(v.Id),
 			Phone:     v.Phone,
 			Name:      v.Name,
 			Age:       v.Age,
@@ -152,7 +153,7 @@ func (s *Service) ListMember(ctx context.Context, req *model.ListMemberReq) (res
 	members := []model.Member{}
 	for _, v := range resp2.List {
 		members = append(members, model.Member{
-			ID:        v.Id,
+			ID:        hashid.ID(v.Id),
 			Phone:     v.Phone,
 			Name:      v.Name,
 			Age:       v.Age,

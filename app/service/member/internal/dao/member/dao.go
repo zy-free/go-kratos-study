@@ -54,6 +54,12 @@ func (dao *Dao) InitMember(ctx context.Context, arg *model.Member) (err error) {
 }
 
 func (dao *Dao) AddMember(ctx context.Context, arg *model.Member) (id int64, err error) {
+	mutex := dao.getMemberLock(ctx,1)
+	fmt.Println(mutex.Lock(ctx))
+	fmt.Println(mutex.Lock(ctx))
+	fmt.Println(mutex.Unlock(ctx))
+	fmt.Println(mutex.Lock(ctx))
+	defer fmt.Println(mutex.Unlock(ctx))
 	return dao.dbAddMember(ctx, arg)
 }
 
@@ -61,11 +67,20 @@ func (dao *Dao) BatchAddMember(ctx context.Context, args []*model.Member) (affec
 	return dao.dbBatchAddMember(ctx, args)
 }
 
-// todo pipeline
+func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (res *model.Member, err error) {
+	addCache := true
+	res, err = dao.cacheGetMember(ctx, id)
+	if err != nil {
+		addCache = false
+		err = nil
+	}
+	defer func() {
+		if res != nil && res.Id == -1 {
+			res = nil
+		}
+	}()
 
-func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (m *model.Member, err error) {
-	m, err = dao.cacheGetMember(ctx, id)
-	if m != nil && err == nil {
+	if res != nil {
 		prom.CacheHit.Incr("member")
 		return
 	}
@@ -83,10 +98,17 @@ func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (m *model.Member, e
 	if err != nil {
 		return
 	}
-	m = rr.(*model.Member)
+	res = rr.(*model.Member)
+	miss := res
+	if miss == nil {
+		miss = &model.Member{Id: -1}
+	}
+	if !addCache {
+		return
+	}
 	// fanout模式
 	dao.cache.Do(ctx, func(ctx context.Context) {
-		_ = dao.cacheSetMember(ctx, id, m)
+		_ = dao.cacheSetMember(ctx, id, miss)
 	})
 	return
 }
@@ -127,8 +149,8 @@ func (dao *Dao) UpdateMember(ctx context.Context, member *model.Member) (err err
 	return dao.dbUpdateMember(ctx, member)
 }
 
-func (dao *Dao) UpdateMemberAttr(ctx context.Context, id int64,attr int32) (err error) {
-	return dao.dbUpdateMemberAttr(ctx, id,attr)
+func (dao *Dao) UpdateMemberAttr(ctx context.Context, id int64, attr int32) (err error) {
+	return dao.dbUpdateMemberAttr(ctx, id, attr)
 }
 
 func (dao *Dao) SetMember(ctx context.Context, arg *model.Member) (err error) {
