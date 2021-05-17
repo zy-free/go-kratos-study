@@ -2,7 +2,6 @@ package favorite
 
 import (
 	"context"
-	"go-kartos-study/app/bff/member/conf"
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/ecode"
@@ -11,18 +10,13 @@ import (
 
 // Service .
 type Service struct {
-	c      *conf.Config
 	memRPC grpc.MemberRPCClient
 }
 
 // New init service.
-func New(c *conf.Config) (s *Service) {
+func New(memRPC grpc.MemberRPCClient) (s *Service) {
 	s = &Service{
-		c: c,
-	}
-	var err error
-	if s.memRPC, err = grpc.NewClient(c.MemberClient); err != nil {
-		panic(err)
+		memRPC: memRPC,
 	}
 	return s
 }

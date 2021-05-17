@@ -1,7 +1,6 @@
 package http
 
 import (
-	"go-kartos-study/app/admin/member/conf"
 	"go-kartos-study/app/admin/member/internal/service/favorite"
 	"go-kartos-study/app/admin/member/internal/service/member"
 	"go-kartos-study/pkg/log"
@@ -15,11 +14,6 @@ var (
 	memSvc  *member.Service
 )
 
-func initService(c *conf.Config) {
-	favSvc = favorite.New(c)
-	memSvc = member.New(c)
-}
-
 //CloseService close all service
 func CloseService() {
 	favSvc.Close()
@@ -27,15 +21,17 @@ func CloseService() {
 }
 
 // Init http.
-func Init(c *conf.Config) {
-	initService(c)
+func Init(c *bm.ServerConfig,fav *favorite.Service,mem  *member.Service) (err error){
+	favSvc = fav
+	memSvc = mem
 
-	engine := bm.DefaultServer(c.HTTPServer)
+	engine := bm.DefaultServer(c)
 	route(engine)
 	if err := engine.Start(); err != nil {
 		log.Error("engine.Start() error(%v)", err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func metadataMiddleware() bm.HandlerFunc {

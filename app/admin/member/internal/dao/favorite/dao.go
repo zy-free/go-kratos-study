@@ -3,32 +3,20 @@ package favorite
 import (
 	"context"
 
-	"go-kartos-study/app/admin/member/conf"
-	"go-kartos-study/app/admin/member/internal/model"
-	"go-kartos-study/pkg/database/orm"
-
 	"github.com/jinzhu/gorm"
+	"go-kartos-study/app/admin/member/internal/model"
 )
 
-// Dao is redis dao.
 type Dao struct {
-	c *conf.Config
-	// db
 	db *gorm.DB
 }
 
 // New new a dao.
-func New(c *conf.Config) (d *Dao) {
+func New(db *gorm.DB) (d *Dao) {
 	d = &Dao{
-		c:  c,
-		db: orm.NewMySQL(c.ORM),
+		db: db,
 	}
-	d.initORM()
 	return d
-}
-
-func (dao *Dao) initORM() {
-	dao.db.LogMode(true)
 }
 
 // Close close dao.

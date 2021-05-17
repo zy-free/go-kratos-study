@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/davecgh/go-spew/spew"
 	"go-kartos-study/app/service/member/internal/model"
-	"go-kartos-study/pkg/sync/pipeline"
 	"strconv"
 )
 
@@ -96,7 +95,6 @@ func (s *Service) addMerge(c context.Context, mid, kid int64) {
 }
 
 func (s *Service) initMerge() {
-	s.merge = pipeline.NewPipeline(s.c.Merge)
 	s.merge.Split = func(a string) int {
 		n, _ := strconv.Atoi(a)
 		return n

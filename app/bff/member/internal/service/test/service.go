@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"fmt"
-	"go-kartos-study/app/bff/member/conf"
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/log"
 	xhttp "go-kartos-study/pkg/net/http/blademaster"
@@ -14,22 +13,17 @@ import (
 
 // Service .
 type Service struct {
-	c          *conf.Config
 	breaker    *breaker.Group
 	memRPC     grpc.MemberRPCClient
 	httpClient *xhttp.Client
 }
 
 // New init service.
-func New(c *conf.Config) (s *Service) {
+func New(httpClient *xhttp.Client, memRPC grpc.MemberRPCClient) (s *Service) {
 	s = &Service{
-		c:          c,
 		breaker:    breaker.NewGroup(nil),
-		httpClient: xhttp.NewClient(c.HTTPClient),
-	}
-	var err error
-	if s.memRPC, err = grpc.NewClient(c.MemberClient); err != nil {
-		panic(err)
+		httpClient: httpClient,
+		memRPC:     memRPC,
 	}
 	return s
 }
@@ -91,9 +85,9 @@ func (s *Service) HttpClientTest(ctx context.Context) (err error) {
 
 	body := struct {
 		Phone string `json:"phone"`
-	}{Phone:"test1238139"}
-	var res2 struct{
-		Code int
+	}{Phone: "test1238139"}
+	var res2 struct {
+		Code    int
 		Message string
 	}
 	err = s.httpClient.Post(ctx, "http://127.0.0.1:8000/x/bff/members", ip, body, &res2)

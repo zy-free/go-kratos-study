@@ -2,27 +2,23 @@ package favorite
 
 import (
 	"context"
-	"go-kartos-study/app/service/member/conf"
 	"go-kartos-study/app/service/member/internal/model"
 	"go-kartos-study/pkg/database/sql"
 )
 
 // Dao is redis dao.
 type Dao struct {
-	c *conf.Config
 	// db
-	db      *sql.DB
+	db *sql.DB
 }
 
 // New new a dao.
-func New(c *conf.Config) (d *Dao) {
+func New(db *sql.DB) (d *Dao) {
 	d = &Dao{
-		c:       c,
-		db:      sql.NewMySQL(c.Mysql),
+		db: db,
 	}
 	return d
 }
-
 
 // Close close dao.
 func (dao *Dao) Close() {
@@ -36,7 +32,6 @@ func (dao *Dao) Ping(c context.Context) (err error) {
 	return dao.db.Ping(c)
 }
 
-
 func (dao *Dao) GetFavoriteByID(ctx context.Context, id int64) (m *model.Favorite, err error) {
-	return dao.dbGetFavoriteByID(ctx,id)
+	return dao.dbGetFavoriteByID(ctx, id)
 }

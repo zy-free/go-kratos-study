@@ -5,8 +5,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"go-kartos-study/app/service/member/appid"
 	"go-kartos-study/app/service/member/conf"
-	"go-kartos-study/app/service/member/internal/server/grpc"
-	"go-kartos-study/app/service/member/internal/service"
 	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/naming/etcd"
 	"go-kartos-study/pkg/net/trace"
@@ -32,8 +30,7 @@ func main() {
 	trace.Init(conf.Conf.Tracer)
 	defer trace.Close()
 
-	svc := service.New(conf.Conf)
-	grpc.New(conf.Conf.GRPCServer, svc)
+	closeFunc := initApp(conf.Conf)
 
 	cancel := etcd.ETCDRegist(conf.Conf.ETCDConfig, appid.AppID, strings.Split(conf.Conf.GRPCServer.Addr, ":")[1], env.Color)
 	defer cancel()
@@ -44,7 +41,7 @@ func main() {
 		log.Info("member-service get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			svc.Close()
+			closeFunc()
 			log.Info("member-service exit")
 			time.Sleep(time.Second)
 			return

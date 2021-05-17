@@ -2,22 +2,19 @@ package favorite
 
 import (
 	"context"
-	"go-kartos-study/app/admin/member/conf"
 	"go-kartos-study/app/admin/member/internal/dao/favorite"
 	"go-kartos-study/app/admin/member/internal/model"
 )
 
 // Service .
 type Service struct {
-	c      *conf.Config
 	favDao *favorite.Dao
 }
 
 // New init service.
-func New(c *conf.Config) (s *Service) {
+func New(favDao *favorite.Dao) (s *Service) {
 	s = &Service{
-		c:      c,
-		favDao: favorite.New(c),
+		favDao: favDao,
 	}
 	return s
 }

@@ -2,22 +2,19 @@ package member
 
 import (
 	"context"
-	"go-kartos-study/app/admin/member/conf"
 	"go-kartos-study/app/admin/member/internal/dao/member"
 	"go-kartos-study/app/admin/member/internal/model"
 )
 
 // Service .
 type Service struct {
-	c      *conf.Config
 	memDao *member.Dao
 }
 
 // New init service.
-func New(c *conf.Config) (s *Service) {
+func New(memDao *member.Dao) (s *Service) {
 	s = &Service{
-		c: c,
-		memDao: member.New(c),
+		memDao: memDao,
 	}
 	return s
 }

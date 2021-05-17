@@ -17,7 +17,6 @@
     - [ ] restful路由支持(:id，path参数支持重复)
     - [x] default标签改写，之前json格式时不生效
 
-
     
 - grpc功能实现
     - [x] etcd注册
@@ -30,7 +29,7 @@
     - [x] trace
     
 - demo
-    - [ ] admin+gorm(share db架构,运营平台微服务共享db，只是权限不同)
+    - [x] admin+gorm(share db架构,运营平台微服务共享db，只是权限不同)
     - [x] service+mysql
     - [x] job+kafka
     - [ ] canal,发送kafka,异步删除缓存
@@ -60,6 +59,7 @@
     - [x] attrs(mysql字段，bit标识)
     - [x] redis(bitmap大offset处理)
     - [ ] 滑动窗口
+    - [ ] 降级(BFF层做，不然客户端做是怕调用者做二级缓存，缓存降级数据)
 
     
 - [x]  pkg/errors处理指南

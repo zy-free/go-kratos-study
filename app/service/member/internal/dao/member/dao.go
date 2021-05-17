@@ -25,14 +25,13 @@ type Dao struct {
 }
 
 // New new a dao.
-func New(c *conf.Config) (d *Dao) {
+func New(db *sql.DB, redis *redis.Pool, publisher kafka.Publisher) (d *Dao) {
 	d = &Dao{
-		c:                 c,
-		db:                sql.NewMySQL(c.Mysql),
-		redis:             redis.NewPool(c.Redis),
+		db:                db,
+		redis:             redis,
 		cacheSingleFlight: &singleflight.Group{},
 		cache:             fanout.New("cache", fanout.Worker(1), fanout.Buffer(1024)),
-		publisher:         kafka.NewPublisher(c.KafkaPublish),
+		publisher:         publisher,
 	}
 	return d
 }
@@ -54,7 +53,7 @@ func (dao *Dao) InitMember(ctx context.Context, arg *model.Member) (err error) {
 }
 
 func (dao *Dao) AddMember(ctx context.Context, arg *model.Member) (id int64, err error) {
-	mutex := dao.getMemberLock(ctx,1)
+	mutex := dao.getMemberLock(ctx, 1)
 	fmt.Println(mutex.Lock(ctx))
 	fmt.Println(mutex.Lock(ctx))
 	fmt.Println(mutex.Unlock(ctx))

@@ -3,29 +3,20 @@ package member
 import (
 	"context"
 	"github.com/jinzhu/gorm"
-	"go-kartos-study/app/admin/member/conf"
 	"go-kartos-study/app/admin/member/internal/model"
-	"go-kartos-study/pkg/database/orm"
 )
 
 // Dao is redis dao.
 type Dao struct {
-	c  *conf.Config
 	db *gorm.DB
 }
 
 // New new a dao.
-func New(c *conf.Config) (d *Dao) {
+func New(db *gorm.DB) (d *Dao) {
 	d = &Dao{
-		c:  c,
-		db: orm.NewMySQL(c.ORM),
+		db: db,
 	}
-	d.initORM()
 	return d
-}
-
-func (dao *Dao) initORM() {
-	dao.db.LogMode(true)
 }
 
 // Close close dao.
@@ -39,7 +30,6 @@ func (dao *Dao) Close() {
 func (dao *Dao) Ping(c context.Context) (err error) {
 	return dao.db.DB().PingContext(c)
 }
-
 
 func (dao *Dao) AddMember(ctx context.Context, arg *model.AddMemberReq) (id int64, err error) {
 	return dao.dbAddMember(ctx, arg)

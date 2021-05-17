@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"github.com/davecgh/go-spew/spew"
-	"go-kartos-study/app/bff/member/internal/server/http"
 	"go-kartos-study/pkg/net/trace"
 	"os"
 	"os/signal"
@@ -27,7 +26,7 @@ func main() {
 	trace.Init(conf.Conf.Tracer)
 	defer trace.Close()
 
-	http.Init(conf.Conf)
+	closeFunc := initApp(conf.Conf)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
@@ -36,7 +35,7 @@ func main() {
 		log.Info("member-service get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
-			http.CloseService()
+			closeFunc()
 			log.Info("member-service exit")
 			time.Sleep(time.Second)
 			return

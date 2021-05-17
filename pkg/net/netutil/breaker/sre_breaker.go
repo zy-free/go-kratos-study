@@ -42,7 +42,7 @@ func newSRE(c *Config) Breaker {
 }
 
 func (b *sreBreaker) summary() (success int64, total int64) {
-	b.stat.Reduce(func(iterator metric.Iterator) float64 {
+	 b.stat.Reduce(func(iterator metric.Iterator) float64 {
 		for iterator.Next() {
 			bucket := iterator.Bucket()
 			total += bucket.Count
