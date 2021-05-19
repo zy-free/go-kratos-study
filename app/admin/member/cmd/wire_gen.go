@@ -10,7 +10,7 @@ import (
 	"go-kartos-study/pkg/database/orm"
 )
 
-func initApp(c *conf.Config)(closeFunc func()) {
+func initApp(c *conf.Config) (closeFunc func()) {
 	db := orm.NewMySQL(c.ORM)
 	db.LogMode(true)
 
@@ -19,9 +19,9 @@ func initApp(c *conf.Config)(closeFunc func()) {
 
 	memService := member.New(memDao)
 	favService := favorite.New(favDao)
-	err := http.Init(c.HTTPServer,favService,memService)
-	if err != nil{
+	err := http.Init(c.HTTPServer, favService, memService)
+	if err != nil {
 		panic(err)
 	}
-	return  http.CloseService
+	return http.CloseService
 }

@@ -1,6 +1,7 @@
 package metric
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -70,6 +71,39 @@ func TestRollingCounterReduce(t *testing.T) {
 	if result != 6.0 {
 		t.Fatalf("Validate sum of points. result: %f", result)
 	}
+}
+
+func TestRollingCounterReduce2(t *testing.T) {
+	size := 3
+	bucketDuration := time.Second
+	opts := RollingCounterOpts{
+		Size:           size,
+		BucketDuration: bucketDuration,
+	}
+	r := NewRollingCounter(opts)
+	pr := func() (count int64, buckets [][]float64) {
+		buckets = make([][]float64, 0)
+		r.Reduce(func(iterator Iterator) float64 {
+			for iterator.Next() {
+				bucket := iterator.Bucket()
+				count = bucket.Count
+				buckets = append(buckets, bucket.Points)
+			}
+			return 0.0
+		})
+		return
+	}
+	fmt.Println(pr()) // 	0 [[] [] []]
+	fmt.Println(pr()) // 	0 [[] [] []]
+	fmt.Println(pr()) // 	0 [[] [] []]
+	r.Add(1)
+	fmt.Println(pr()) // 	1 [[] [] [1]]
+	r.Add(0)
+	fmt.Println(pr()) // 	2 [[] [] [1]]
+	r.Add(2)
+	r.Add(3)
+	r.Add(4)
+	fmt.Println(pr()) // 	5 [[] [] [10]]
 }
 
 func TestRollingCounterDataRace(t *testing.T) {

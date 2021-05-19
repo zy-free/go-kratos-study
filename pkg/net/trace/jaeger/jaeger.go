@@ -26,7 +26,7 @@ func (r *JaegerReporter) WriteSpan(raw *trace.Span) (err error) {
 	spanID := SpanID(ctx.SpanID)
 	parentID := SpanID(ctx.ParentID)
 	tags := raw.Tags()
-	log.Info("[info] write span")
+	log.Info("[info] write span traceID:%v,spanID:%v,parentID:%v",traceID,spanID,parentID)
 	span := &Span{
 		context:       NewSpanContext(traceID, spanID, parentID, true, nil),
 		operationName: raw.OperationName(),

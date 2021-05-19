@@ -2,15 +2,16 @@ package jaeger
 
 import (
 	"flag"
+	"go-kartos-study/pkg/conf/env"
 	"os"
 
-	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/net/trace"
 )
 
 var (
 	_jaegerAppID    = env.AppID
-	_jaegerEndpoint = "http://127.0.0.1:9191"
+	//_jaegerAppID    = "bff-member-service"
+	_jaegerEndpoint = "http://*:14268/api/traces"
 )
 
 func init() {

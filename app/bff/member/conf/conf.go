@@ -29,9 +29,12 @@ type Config struct {
 
 }
 
+func init(){
+	flag.StringVar(&confPath, "conf", "./app/bff/member/cmd/config.toml", "default config path")
+}
+
 // Init init conf
 func Init() error {
-	flag.StringVar(&confPath, "conf", "./app/bff/member/cmd/config.toml", "default config path")
 	if confPath != "" {
 		return local()
 	}

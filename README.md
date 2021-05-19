@@ -10,10 +10,10 @@
     - [ ] trace(jaeger)
     - [ ] limit(根据cpu过载保护，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
         - 压测
-    - [ ] 分布式限流(不是简单的redis分布式限流，会有热key瓶颈)
-    - [ ] criticality 接口重要性
+    - [ ] 分布式限流(不是简单的redis分布式限流，因为会有热key瓶颈)
+    - [x] criticality 接口重要性
     - [ ] promethues监控
-    - [x] 新增break中间件(接口级别熔断)
+    - [x] 新增break中间件(接口级别熔断) 
     - [ ] restful路由支持(:id，path参数支持重复)
     - [x] default标签改写，之前json格式时不生效
 
@@ -58,8 +58,8 @@
     - [x] hash-id封装(内部int类型给前端时转化为hash)
     - [x] attrs(mysql字段，bit标识)
     - [x] redis(bitmap大offset处理)
-    - [ ] 滑动窗口
-    - [ ] 降级(BFF层做，不然客户端做是怕调用者做二级缓存，缓存降级数据)
+    - [x] 滑动窗口
+    - [x] 降级(BFF层做，不在service端做是怕调用者做二级缓存，缓存降级数据,当遇到错误时，可以选择返回空，默认数据或者热门数据：服务端push，内存存储)
 
     
 - [x]  pkg/errors处理指南

@@ -1,9 +1,9 @@
 package zipkin
 
 import (
+	"go-kartos-study/pkg/conf/env"
 	"time"
 
-	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/net/trace"
 	xtime "go-kartos-study/pkg/time"
 )
