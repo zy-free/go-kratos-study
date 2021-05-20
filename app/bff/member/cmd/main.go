@@ -9,7 +9,8 @@ import (
 	"go-kartos-study/app/bff/member/internal/service/test"
 	"go-kartos-study/app/service/member/api/grpc"
 	xhttp "go-kartos-study/pkg/net/http/blademaster"
-	"go-kartos-study/pkg/net/trace/zipkin"
+	"go-kartos-study/pkg/net/trace"
+	"go-kartos-study/pkg/net/trace/jaeger"
 	"os"
 	"os/signal"
 	"syscall"
@@ -48,11 +49,11 @@ func main() {
 	log.Init(conf.Conf.Log)
 	defer log.Close()
 	//trace.Init(conf.Conf.Tracer)
-	//jaeger.Init()
-	zipkin.Init(&zipkin.Config{
-		Endpoint: "http://8.131.78.197:9411/api/v2/spans",
-	})
-	//defer trace.Close()
+	jaeger.Init()
+	//zipkin.Init(&zipkin.Config{
+	//	Endpoint: "http://8.131.78.197:9433/api/v2/spans",
+	//})
+	defer trace.Close()
 
 	closeFunc := initApp(conf.Conf)
 

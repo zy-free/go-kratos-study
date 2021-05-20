@@ -1,7 +1,6 @@
 package zipkin
 
 import (
-	"go-kartos-study/pkg/conf/env"
 	"time"
 
 	"go-kartos-study/pkg/net/trace"
@@ -26,5 +25,5 @@ func Init(c *Config) {
 	if c.Timeout == 0 {
 		c.Timeout = xtime.Duration(200 * time.Millisecond)
 	}
-	trace.SetGlobalTracer(trace.NewTracer(env.AppID, newReport(c), c.DisableSample))
+	trace.SetGlobalTracer(trace.NewTracer("bff-member-service", newReport(c), c.DisableSample))
 }

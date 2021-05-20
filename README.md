@@ -7,7 +7,7 @@
         - 注意limiter初始化的位置 
     - [x] recover
     - [x] timeout（http层次未作拦截，即无传入timeoutHander,但是传入了Context供其他层判断）
-    - [x] trace(zipkin)
+    - [x] trace(zipkin/jaeger)
     - [ ] limit(根据cpu过载保护，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
         - 压测
     - [ ] 分布式限流(不是简单的redis分布式限流，因为会有热key瓶颈)

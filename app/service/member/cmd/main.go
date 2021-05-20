@@ -13,7 +13,8 @@ import (
 	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/database/sql"
 	"go-kartos-study/pkg/naming/etcd"
-	"go-kartos-study/pkg/net/trace/zipkin"
+	"go-kartos-study/pkg/net/trace"
+	"go-kartos-study/pkg/net/trace/jaeger"
 	"go-kartos-study/pkg/queue/kafka"
 	"go-kartos-study/pkg/sync/pipeline"
 	"os"
@@ -51,9 +52,11 @@ func main() {
 
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	zipkin.Init(&zipkin.Config{
-		Endpoint: "http://8.131.78.197:9411/api/v2/spans",
-	})
+	//zipkin.Init(&zipkin.Config{
+	//	Endpoint: "http://8.131.78.197:9433/api/v2/spans",
+	//})
+	jaeger.Init()
+	defer trace.Close()
 
 	closeFunc := initApp(conf.Conf)
 
