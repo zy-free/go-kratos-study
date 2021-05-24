@@ -78,10 +78,10 @@ func (dao *Dao) cacheDelMember(ctx context.Context, id int64) (err error) {
 	return
 }
 
-func (d *Dao) cacheFavedBit(ctx context.Context, mid int64) (err error) {
+func (dao *Dao) cacheFavedBit(ctx context.Context, mid int64) (err error) {
 	key := favedBitKey( mid)
 	offset := mid % _bucket
-	conn := d.redis.Get(ctx)
+	conn := dao.redis.Get(ctx)
 	defer conn.Close()
 	if _, err = conn.Do("SETBIT", key, offset, 0); err != nil {
 		log.Error("conn.DO(SETBIT) key(%s) offset(%d) err(%v)", key, offset, err)
@@ -89,10 +89,10 @@ func (d *Dao) cacheFavedBit(ctx context.Context, mid int64) (err error) {
 	return
 }
 
-func (d *Dao) cacheUnFavedBit(ctx context.Context, mid int64) (err error) {
+func (dao *Dao) cacheUnFavedBit(ctx context.Context, mid int64) (err error) {
 	key := favedBitKey(mid)
 	offset := mid % _bucket
-	conn := d.redis.Get(ctx)
+	conn := dao.redis.Get(ctx)
 	defer conn.Close()
 	if _, err = conn.Do("SETBIT", key, offset, 1); err != nil {
 		log.Error("conn.DO(SETBIT) key(%s) offset(%d) err(%v)", key, offset, err)
@@ -100,8 +100,8 @@ func (d *Dao) cacheUnFavedBit(ctx context.Context, mid int64) (err error) {
 	return
 }
 
-func (d *Dao) getMemberLock(ctx context.Context, mid int64) (lock *redis.RedisLock) {
+func (dao *Dao) getMemberLock(ctx context.Context, mid int64) (lock *redis.RedisLock) {
 	key := keyMemberLock(mid)
 
-	return redis.NewMutex(d.redis,key,30)
+	return redis.NewMutex(dao.redis,key,30)
 }

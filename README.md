@@ -8,15 +8,17 @@
     - [x] recover
     - [x] timeout（http层次未作拦截，即无传入timeoutHander,但是传入了Context供其他层判断）
     - [x] trace(zipkin/jaeger)
-    - [ ] limit(根据cpu过载保护，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
-        - 压测
-    - [ ] 分布式限流(不是简单的redis分布式限流，因为会有热key瓶颈)
     - [x] criticality 接口重要性
     - [ ] promethues监控
     - [x] 新增break中间件(接口级别熔断) 
-    - [ ] restful路由支持(:id，path参数支持重复)
     - [x] default标签改写，之前json格式时不生效
 
+- todo
+    - [ ] limit(根据cpu过载保护，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
+        - 压测
+    - [ ] 分布式限流(不是简单的redis分布式限流，因为会有热key瓶颈)
+    - [ ] restful路由支持(:id，path参数支持重复)(Add mixed param and non-param paths)
+    - [ ] Beanstalkd?
     
 - grpc功能实现
     - [x] etcd注册
@@ -33,7 +35,6 @@
     - [x] service+mysql
     - [x] job+kafka
     - [ ] canal,发送kafka,异步删除缓存
-    - [ ] Beanstalkd?
     - [x] kafka
     - [x] 数据库delete_time 为null的时间处理，自定义时间
     - [x] errgroup
@@ -44,7 +45,7 @@
     - [x] redis的demo，读失败后的写缓存策略（降级后一般读失败不触发回写缓存）。
     - [x] 空缓存保护策略,将空数据缓存，避免请求直接打到db
     - [x] redis分布式锁(架构上尽量规避，性能不高，case多，容易出bug)
-    - [ ] 基于B站的mysql的redis封装go-zero的cache
+    - [x] 基于B站的mysql的redis封装go-zero的cache
     - [x] chan-singleFlight
     - [x] chan-fanout(生产消费模式：这里用作redis回写异步处理)
     - [x] chan-pipeline

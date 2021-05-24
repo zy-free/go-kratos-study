@@ -62,6 +62,16 @@ func min(a, b int) int {
 	return b
 }
 
+// addChild will add a child node, keeping wildcards at the end
+func (n *node) addChild(child *node) {
+	if n.wildChild && len(n.children) > 0 {
+		wildcardChild := n.children[len(n.children)-1]
+		n.children = append(n.children[:len(n.children)-1], child, wildcardChild)
+	} else {
+		n.children = append(n.children, child)
+	}
+}
+
 func countParams(path string) uint8 {
 	var n uint
 	for i := 0; i < len(path); i++ {
@@ -88,7 +98,7 @@ const (
 type node struct {
 	path      string
 	indices   string
-	children  []*node
+	children  []*node // child nodes, at most 1 :param style node at the end of the array
 	handlers  []HandlerFunc
 	priority  uint32
 	nType     nodeType
