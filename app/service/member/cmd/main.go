@@ -8,6 +8,7 @@ import (
 	favoriteDao "go-kartos-study/app/service/member/internal/dao/favorite"
 	memberDao "go-kartos-study/app/service/member/internal/dao/member"
 	"go-kartos-study/app/service/member/internal/server/grpc"
+	"go-kartos-study/app/service/member/internal/server/http"
 	"go-kartos-study/app/service/member/internal/service"
 	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/conf/env"
@@ -37,6 +38,7 @@ func initApp(c *conf.Config) (closeFunc func()){
 	memDao := memberDao.New(db, redis, publisher)
 	svc := service.New(favDao, memDao, merge)
 
+	http.Init(conf.Conf.HTTPServer)
 	grpc.New(conf.Conf.GRPCServer, svc)
 	return svc.Close
 }

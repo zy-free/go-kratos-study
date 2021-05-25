@@ -1,3 +1,5 @@
+kratos学习项目
+
 - 为什么包取名叫internal，因为go会对这个包名做禁止引用，保证代码的解耦
 
 - B站v1的httpServer运行
@@ -9,16 +11,18 @@
     - [x] timeout（http层次未作拦截，即无传入timeoutHander,但是传入了Context供其他层判断）
     - [x] trace(zipkin/jaeger)
     - [x] criticality 接口重要性
-    - [ ] promethues监控
     - [x] 新增break中间件(接口级别熔断) 
     - [x] default标签改写，之前json格式时不生效
+    - [x] promethues监控
 
 - todo
     - [ ] limit(根据cpu过载保护，https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81)
         - 压测
     - [ ] 分布式限流(不是简单的redis分布式限流，因为会有热key瓶颈)
-    - [ ] restful路由支持(:id，path参数支持重复)(Add mixed param and non-param paths)
+    - [ ] restful路由支持(:id，path参数支持重复)(gin issue:Add mixed param and non-param paths)
     - [ ] Beanstalkd?
+    - [ ] canal,发送kafka,异步删除缓存
+    - [ ] golangci检测
     
 - grpc功能实现
     - [x] etcd注册
@@ -34,7 +38,6 @@
     - [x] admin+gorm(share db架构,运营平台微服务共享db，只是权限不同)
     - [x] service+mysql
     - [x] job+kafka
-    - [ ] canal,发送kafka,异步删除缓存
     - [x] kafka
     - [x] 数据库delete_time 为null的时间处理，自定义时间
     - [x] errgroup

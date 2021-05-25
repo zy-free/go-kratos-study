@@ -3,6 +3,7 @@ package conf
 import (
 	"flag"
 	"go-kartos-study/pkg/log"
+	bm "go-kartos-study/pkg/net/http/blademaster"
 	"go-kartos-study/pkg/net/trace"
 	"go-kartos-study/pkg/queue/kafka"
 
@@ -21,11 +22,17 @@ type Config struct {
 	Log           *log.Config
 	Tracer        *trace.Config
 	KafkaConsumer *kafka.ConsumerConfig
+
+	HTTPServer *bm.ServerConfig
+
+}
+
+func init(){
+	flag.StringVar(&confPath, "conf", "./app/job/member/cmd/config.toml", "default config path")
 }
 
 // Init init conf
 func Init() error {
-	flag.StringVar(&confPath, "conf", "./app/job/member/cmd/config.toml", "default config path")
 	if confPath != "" {
 		return local()
 	}

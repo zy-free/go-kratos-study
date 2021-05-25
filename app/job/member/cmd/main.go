@@ -2,16 +2,17 @@ package main
 
 import (
 	"flag"
-	"github.com/davecgh/go-spew/spew"
-	"go-kartos-study/app/job/member/internal/service"
-	"go-kartos-study/pkg/net/trace"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"go-kartos-study/app/job/member/conf"
+	"go-kartos-study/app/job/member/internal/http"
+	"go-kartos-study/app/job/member/internal/service"
 	"go-kartos-study/pkg/log"
+	"go-kartos-study/pkg/net/trace"
 )
 
 func main() {
@@ -27,6 +28,7 @@ func main() {
 	trace.Init(conf.Conf.Tracer)
 	defer trace.Close()
 
+	http.Init(conf.Conf.HTTPServer)
 	service.New(conf.Conf)
 
 	c := make(chan os.Signal, 1)

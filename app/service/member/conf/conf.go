@@ -7,6 +7,7 @@ import (
 	"go-kartos-study/pkg/database/sql"
 	"go-kartos-study/pkg/log"
 	"go-kartos-study/pkg/naming/etcd"
+	bm "go-kartos-study/pkg/net/http/blademaster"
 	"go-kartos-study/pkg/net/rpc/warden"
 	"go-kartos-study/pkg/net/trace"
 	kafka "go-kartos-study/pkg/queue/kafka"
@@ -30,6 +31,8 @@ type Config struct {
 	KafkaPublish  *kafka.PublishConfig
 
 	GRPCServer *warden.ServerConfig
+	HTTPServer *bm.ServerConfig
+
 	ETCDConfig *etcd.ETCDConfig
 }
 
