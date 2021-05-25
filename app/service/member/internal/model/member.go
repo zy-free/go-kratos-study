@@ -15,7 +15,7 @@ const (
 )
 
 type Member struct {
-	Id        int64     `db:"id"`
+	ID        int64     `db:"id"`
 	Phone     string    `db:"phone"`
 	Name      string    `db:"name"`
 	Age       int64     `db:"age"`
@@ -46,7 +46,7 @@ func (r *Member) IsPublic() bool {
 }
 
 type MemberSort struct {
-	Id       int64 `db:"id"`
+	ID       int64 `db:"id"`
 	OrderNum int64 `db:"order_num"`
 }
 type ArgMemberSort []MemberSort

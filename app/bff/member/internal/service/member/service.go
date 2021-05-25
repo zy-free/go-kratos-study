@@ -3,7 +3,9 @@ package member
 import (
 	"context"
 	"fmt"
+
 	"github.com/pkg/errors"
+
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/ecode"
@@ -19,7 +21,7 @@ type Service struct {
 // New init service.
 func New(memRPC grpc.MemberRPCClient) (s *Service) {
 	s = &Service{
-		memRPC:memRPC,
+		memRPC: memRPC,
 	}
 	return s
 }
@@ -35,7 +37,7 @@ func (s *Service) Ping(c context.Context) (err error) {
 
 func (s *Service) GetMemberByID(ctx context.Context, arg *model.GetMemberByIDReq) (result *model.GetMemberResp, err error) {
 	resp, err := s.memRPC.GetMemberByID(ctx, &grpc.GetMemberByIDReq{
-		Id: arg.Id,
+		Id: arg.ID,
 	})
 	if err != nil {
 		return nil, ecode.ErrQuery
@@ -72,8 +74,7 @@ func (s *Service) GetMemberByPhone(ctx context.Context, arg *model.GetMemberByPh
 }
 
 func (s *Service) GetMemberMaxAge(ctx context.Context) (result *model.GetMemberMaxAgeResq, err error) {
-	resp, err := s.memRPC.GetMemberMaxAge(ctx, &grpc.GetMemberMaxAgeReq{
-	})
+	resp, err := s.memRPC.GetMemberMaxAge(ctx, &grpc.GetMemberMaxAgeReq{})
 	if err != nil {
 		return nil, ecode.ErrQuery
 	}
@@ -117,9 +118,9 @@ func (s *Service) QueryMemberByIds(ctx context.Context, req *model.QueryMemberBy
 	if err != nil {
 		return nil, ecode.ErrQuery
 	}
-	list := make(map[ hashid.ID]*model.Member)
+	list := make(map[hashid.ID]*model.Member)
 	for k, v := range resp.List {
-		list[ hashid.ID(k)] = &model.Member{
+		list[hashid.ID(k)] = &model.Member{
 			ID:        hashid.ID(v.Id),
 			Phone:     v.Phone,
 			Name:      v.Name,
@@ -134,6 +135,7 @@ func (s *Service) QueryMemberByIds(ctx context.Context, req *model.QueryMemberBy
 	}
 	return
 }
+
 func (s *Service) ListMember(ctx context.Context, req *model.ListMemberReq) (result *model.ListMemberResp, err error) {
 	resp, err := s.memRPC.CountMember(ctx, &grpc.CountMemberReq{})
 	if err != nil {
@@ -164,7 +166,7 @@ func (s *Service) ListMember(ctx context.Context, req *model.ListMemberReq) (res
 		},
 		Members: members,
 	}
-	return
+	return result, nil
 }
 
 func (s *Service) AddMember(ctx context.Context, req *model.AddMemberReq) (result *model.AddMemberResp, err error) {
@@ -176,7 +178,7 @@ func (s *Service) AddMember(ctx context.Context, req *model.AddMemberReq) (resul
 	})
 
 	if err != nil {
-		return nil, errors.WithMessage(ecode.ErrInsert, fmt.Sprintf("memRpc.Addmember:(%v)",err))
+		return nil, errors.WithMessage(ecode.ErrInsert, fmt.Sprintf("memRpc.Addmember:(%v)", err))
 	}
 	result = &model.AddMemberResp{
 		ID: resp.Id,

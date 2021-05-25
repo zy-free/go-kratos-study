@@ -2,16 +2,39 @@ package main
 
 import (
 	"flag"
-	"github.com/davecgh/go-spew/spew"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"go-kartos-study/app/admin/member/conf"
+	favDao "go-kartos-study/app/admin/member/internal/dao/favorite"
+	memDao "go-kartos-study/app/admin/member/internal/dao/member"
+	"go-kartos-study/app/admin/member/internal/server/http"
+	"go-kartos-study/app/admin/member/internal/service/favorite"
+	"go-kartos-study/app/admin/member/internal/service/member"
+	"go-kartos-study/pkg/database/orm"
 	"go-kartos-study/pkg/log"
 	"go-kartos-study/pkg/net/trace"
 )
+
+func initApp(c *conf.Config) (closeFunc func()) {
+	db := orm.NewMySQL(c.ORM)
+	db.LogMode(true)
+
+	favDao := favDao.New(db)
+	memDao := memDao.New(db)
+
+	memService := member.New(memDao)
+	favService := favorite.New(favDao)
+	err := http.Init(c.HTTPServer, favService, memService)
+	if err != nil {
+		panic(err)
+	}
+	return http.CloseService
+}
 
 func main() {
 	flag.Parse()
@@ -45,5 +68,3 @@ func main() {
 		}
 	}
 }
-
-

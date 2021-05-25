@@ -2,22 +2,23 @@ package main
 
 import (
 	"flag"
-	"github.com/davecgh/go-spew/spew"
-	"go-kartos-study/app/bff/member/internal/server/http"
-	"go-kartos-study/app/bff/member/internal/service/favorite"
-	"go-kartos-study/app/bff/member/internal/service/member"
-	"go-kartos-study/app/bff/member/internal/service/test"
-	"go-kartos-study/app/service/member/api/grpc"
-	xhttp "go-kartos-study/pkg/net/http/blademaster"
-	"go-kartos-study/pkg/net/trace"
-	"go-kartos-study/pkg/net/trace/jaeger"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"go-kartos-study/app/bff/member/conf"
+	"go-kartos-study/app/bff/member/internal/server/http"
+	"go-kartos-study/app/bff/member/internal/service/favorite"
+	"go-kartos-study/app/bff/member/internal/service/member"
+	"go-kartos-study/app/bff/member/internal/service/test"
+	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/log"
+	xhttp "go-kartos-study/pkg/net/http/blademaster"
+	"go-kartos-study/pkg/net/trace"
+	"go-kartos-study/pkg/net/trace/jaeger"
 )
 
 func initApp(c *conf.Config) (closeFunc func()) {
@@ -32,10 +33,10 @@ func initApp(c *conf.Config) (closeFunc func()) {
 	favService := favorite.New(memRPC)
 
 	err = http.Init(c.HTTPServer, favService, memService, testService)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
-	return  http.CloseService
+	return http.CloseService
 }
 
 func main() {
@@ -48,11 +49,11 @@ func main() {
 
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	//trace.Init(conf.Conf.Tracer)
+	// trace.Init(conf.Conf.Tracer)
 	jaeger.Init()
-	//zipkin.Init(&zipkin.Config{
+	// zipkin.Init(&zipkin.Config{
 	//	Endpoint: "http://8.131.78.197:9433/api/v2/spans",
-	//})
+	// })
 	defer trace.Close()
 
 	closeFunc := initApp(conf.Conf)
@@ -74,5 +75,3 @@ func main() {
 		}
 	}
 }
-
-

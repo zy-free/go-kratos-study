@@ -2,7 +2,14 @@ package main
 
 import (
 	"flag"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
+
 	"github.com/davecgh/go-spew/spew"
+
 	"go-kartos-study/app/service/member/appid"
 	"go-kartos-study/app/service/member/conf"
 	favoriteDao "go-kartos-study/app/service/member/internal/dao/favorite"
@@ -13,22 +20,15 @@ import (
 	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/conf/env"
 	"go-kartos-study/pkg/database/sql"
+	"go-kartos-study/pkg/log"
 	"go-kartos-study/pkg/naming/etcd"
 	"go-kartos-study/pkg/net/trace"
 	"go-kartos-study/pkg/net/trace/jaeger"
 	"go-kartos-study/pkg/queue/kafka"
 	"go-kartos-study/pkg/sync/pipeline"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
-	"time"
-
-	"go-kartos-study/pkg/log"
 )
 
-
-func initApp(c *conf.Config) (closeFunc func()){
+func initApp(c *conf.Config) (closeFunc func()) {
 	db := sql.NewMySQL(c.Mysql)
 	redis := redis.NewPool(c.Redis)
 	publisher := kafka.NewPublisher(c.KafkaPublish)
@@ -38,11 +38,10 @@ func initApp(c *conf.Config) (closeFunc func()){
 	memDao := memberDao.New(db, redis, publisher)
 	svc := service.New(favDao, memDao, merge)
 
-	http.Init(conf.Conf.HTTPServer)
+	_ = http.Init(conf.Conf.HTTPServer)
 	grpc.New(conf.Conf.GRPCServer, svc)
 	return svc.Close
 }
-
 
 func main() {
 	flag.Parse()
@@ -54,9 +53,7 @@ func main() {
 
 	log.Init(conf.Conf.Log)
 	defer log.Close()
-	//zipkin.Init(&zipkin.Config{
-	//	Endpoint: "http://8.131.78.197:9433/api/v2/spans",
-	//})
+
 	jaeger.Init()
 	defer trace.Close()
 

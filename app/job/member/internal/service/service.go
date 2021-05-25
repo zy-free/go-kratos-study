@@ -35,7 +35,7 @@ func (s *Service) Ping(c context.Context) (err error) {
 
 func (s *Service) memberConsume(ctx context.Context) {
 	defer s.consumer.Close()
-	s.consumer.Consume(ctx, func(ctx context.Context, event kafka.Event) error {
+	_ = s.consumer.Consume(ctx, func(ctx context.Context, event kafka.Event) error {
 		log.Infoc(ctx, "sub: key=%s value=%s header=%v", event.Key, event.Payload, event.Properties)
 		return nil
 	})

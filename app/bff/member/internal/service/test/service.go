@@ -3,12 +3,13 @@ package test
 import (
 	"context"
 	"fmt"
+	"net/url"
+
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/log"
 	xhttp "go-kartos-study/pkg/net/http/blademaster"
 	"go-kartos-study/pkg/net/metadata"
 	"go-kartos-study/pkg/net/netutil/breaker"
-	"net/url"
 )
 
 // Service .
@@ -53,20 +54,20 @@ func (s *Service) BreakerTest(ctx context.Context) (err error) {
 		return
 	}
 	brk.MarkFailed()
-	//brk.MarkSuccess()
+	// brk.MarkSuccess()
 	// 正常情况下
 	// doSomething
-	//onBreaker(breaker breaker.Breaker, err *error) {
+	// onBreaker(breaker breaker.Breaker, err *error) {
 	//	if err != nil && *err != nil {
 	//		breaker.MarkFailed()
 	//	} else {
 	//		breaker.MarkSuccess()
 	//	}
-	//}
+	// }
 	return
 }
 
-func (s *Service) HttpClientTest(ctx context.Context) (err error) {
+func (s *Service) HTTPClientTest(ctx context.Context) (err error) {
 	ip := metadata.String(ctx, metadata.RemoteIP)
 	params := url.Values{}
 	params.Set("id", "杭州")
@@ -81,6 +82,9 @@ func (s *Service) HttpClientTest(ctx context.Context) (err error) {
 		}
 	}
 	err = s.httpClient.Get(ctx, fmt.Sprintf("%s?%s", "http://api.help.bj.cn/apis/weather36h/", params.Encode()), ip, params, &res)
+	if err != nil {
+		return
+	}
 	log.Info("httpClient.Get res:%s", res)
 
 	body := struct {
@@ -91,7 +95,10 @@ func (s *Service) HttpClientTest(ctx context.Context) (err error) {
 		Message string
 	}
 	err = s.httpClient.Post(ctx, "http://127.0.0.1:8000/x/bff/members", ip, body, &res2)
+	if err != nil {
+		return
+	}
+	log.Info("httpClient.Post res:%v", res2)
 
-	log.Info("httpClient.Post res:%s", res2)
-	return
+	return nil
 }

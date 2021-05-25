@@ -6,7 +6,7 @@ import (
 )
 
 func addFavorite(c *bm.Context) {
-	c.JSON("addFavorite",nil)
+	c.JSON("addFavorite", nil)
 }
 
 func getFavoriteByID(c *bm.Context) {
@@ -16,4 +16,3 @@ func getFavoriteByID(c *bm.Context) {
 	}
 	c.JSON(favSvc.GetFavoriteByID(c, arg))
 }
-

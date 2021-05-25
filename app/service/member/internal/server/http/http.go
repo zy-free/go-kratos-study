@@ -6,9 +6,8 @@ import (
 	"net/http"
 )
 
-
 // Init http.
-func Init(c *bm.ServerConfig)(err error) {
+func Init(c *bm.ServerConfig) (err error) {
 	engine := bm.DefaultServer(c)
 	route(engine)
 	if err := engine.Start(); err != nil {

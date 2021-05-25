@@ -4,19 +4,21 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+
 	"github.com/pkg/errors"
+
 	"go-kartos-study/app/admin/member/internal/model"
 	"go-kartos-study/pkg/ecode"
 )
 
-const (
-	_shard = 100
-)
+// const (
+//	_shard = 100
+// )
 
 // 分表命名:表名+hit
-func memberHit(id int64) string {
-	return fmt.Sprintf("member_%d", id%_shard)
-}
+// func memberHit(id int64) string {
+//	return fmt.Sprintf("member_%d", id%_shard)
+// }
 
 // 创建单个
 func (dao *Dao) dbAddMember(ctx context.Context, arg *model.AddMemberReq) (id int64, err error) {

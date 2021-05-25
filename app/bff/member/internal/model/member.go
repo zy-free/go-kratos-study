@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go-kartos-study/pkg/hashid"
 	"strconv"
+
+	"go-kartos-study/pkg/hashid"
 )
 
 type Member struct {

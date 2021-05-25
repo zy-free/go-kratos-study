@@ -2,12 +2,13 @@ package conf
 
 import (
 	"flag"
-	"go-kartos-study/pkg/log"
-	"go-kartos-study/pkg/net/rpc/warden"
-	"go-kartos-study/pkg/net/trace"
 
 	"github.com/BurntSushi/toml"
+
+	"go-kartos-study/pkg/log"
 	bm "go-kartos-study/pkg/net/http/blademaster"
+	"go-kartos-study/pkg/net/rpc/warden"
+	"go-kartos-study/pkg/net/trace"
 )
 
 // global var
@@ -26,10 +27,9 @@ type Config struct {
 	MemberClient *warden.ClientConfig
 
 	HTTPClient *bm.ClientConfig
-
 }
 
-func init(){
+func init() {
 	flag.StringVar(&confPath, "conf", "./app/bff/member/cmd/config.toml", "default config path")
 }
 

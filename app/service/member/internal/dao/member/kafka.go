@@ -8,12 +8,11 @@ import (
 	"strconv"
 )
 
-func (dao *Dao) KafkaPushMember(ctx context.Context, m *model.Member) ( err error) {
-	b,_:= json.Marshal(m)
-	err = dao.publisher.Publish(ctx,kafka.Event{
-		Key:        strconv.Itoa(int(m.Id)),
-		Payload:    b,
+func (dao *Dao) KafkaPushMember(ctx context.Context, m *model.Member) (err error) {
+	b, _ := json.Marshal(m)
+	err = dao.publisher.Publish(ctx, kafka.Event{
+		Key:     strconv.Itoa(int(m.ID)),
+		Payload: b,
 	})
 	return
 }
-

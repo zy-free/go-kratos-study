@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/gorm"
+
 	"go-kartos-study/app/admin/member/internal/model"
 )
 

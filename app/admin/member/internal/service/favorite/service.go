@@ -29,6 +29,6 @@ func (s *Service) Ping(c context.Context) (err error) {
 }
 
 func (s *Service) GetFavoriteByID(ctx context.Context, arg *model.GetFavoriteByIDReq) (favorite *model.Favorite, err error) {
-	favorite, err = s.favDao.GetFavoriteByID(ctx, arg.Id)
+	favorite, err = s.favDao.GetFavoriteByID(ctx, arg.ID)
 	return
 }

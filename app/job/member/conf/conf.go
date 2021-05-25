@@ -24,10 +24,9 @@ type Config struct {
 	KafkaConsumer *kafka.ConsumerConfig
 
 	HTTPServer *bm.ServerConfig
-
 }
 
-func init(){
+func init() {
 	flag.StringVar(&confPath, "conf", "./app/job/member/cmd/config.toml", "default config path")
 }
 

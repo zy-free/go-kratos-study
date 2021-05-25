@@ -2,6 +2,7 @@ package favorite
 
 import (
 	"context"
+
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/ecode"
@@ -32,13 +33,13 @@ func (s *Service) Ping(c context.Context) (err error) {
 
 func (s *Service) GetFavoriteByID(ctx context.Context, arg *model.GetFavoriteByIDReq) (result *model.GetFavoriteResp, err error) {
 	resp, err := s.memRPC.GetFavoriteByID(ctx, &grpc.GetFavoriteByIDReq{
-		Id: arg.Id,
+		Id: arg.ID,
 	})
 	if err != nil {
 		return nil, ecode.ErrQuery
 	}
 	result = &model.GetFavoriteResp{Favorite: model.Favorite{
-		Id:     resp.Id,
+		ID:     resp.Id,
 		Mid:    resp.Mid,
 		Name:   resp.Name,
 		HintAt: xtime.Time(resp.HintAt),

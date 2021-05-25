@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"go-kartos-study/app/service/member/internal/model"
 	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/log"
@@ -11,12 +12,12 @@ import (
 
 const (
 	_memberKey     = "m:%d"
-	_memberLockKey     = "mlock:%d"
+	_memberLockKey = "mlock:%d"
 	// key fb_mid/100000  offset => mid%100000
 	// bit value 1 mean unfaved; bit value 0 mean faved
 	// 为了避免单个 BITSET 过大或者热点，需要使用 region sharding
-	_favedBit = "fb_%d"
-	_bucket   = 100000
+	_favedBit      = "fb_%d"
+	_bucket        = 100000
 	_defaultExpire = 600
 )
 
@@ -35,14 +36,14 @@ func favedBitKey(mid int64) string {
 func (dao *Dao) cacheGetMember(ctx context.Context, id int64) (m *model.Member, err error) {
 	var (
 		item []byte
-		key = keyMember(id)
+		key  = keyMember(id)
 		conn = dao.redis.Get(ctx)
 	)
 	defer conn.Close()
 	if item, err = redis.Bytes(conn.Do("GET", key)); err != nil {
 		if err == redis.ErrNil {
 			err = nil
-		}else{
+		} else {
 			log.Error("conn.Do(GET %s) error(%v)", key, err)
 		}
 		return
@@ -79,7 +80,7 @@ func (dao *Dao) cacheDelMember(ctx context.Context, id int64) (err error) {
 }
 
 func (dao *Dao) cacheFavedBit(ctx context.Context, mid int64) (err error) {
-	key := favedBitKey( mid)
+	key := favedBitKey(mid)
 	offset := mid % _bucket
 	conn := dao.redis.Get(ctx)
 	defer conn.Close()
@@ -103,5 +104,5 @@ func (dao *Dao) cacheUnFavedBit(ctx context.Context, mid int64) (err error) {
 func (dao *Dao) getMemberLock(ctx context.Context, mid int64) (lock *redis.RedisLock) {
 	key := keyMemberLock(mid)
 
-	return redis.NewMutex(dao.redis,key,30)
+	return redis.NewMutex(dao.redis, key, 30)
 }

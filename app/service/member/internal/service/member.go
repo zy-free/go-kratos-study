@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/davecgh/go-spew/spew"
-	"go-kartos-study/app/service/member/internal/model"
 	"strconv"
+
+	"github.com/davecgh/go-spew/spew"
+
+	"go-kartos-study/app/service/member/internal/model"
 )
 
 func (s *Service) GetMemberByID(ctx context.Context, id int64) (member *model.Member, err error) {
@@ -47,8 +49,8 @@ func (s *Service) AddMember(ctx context.Context, member *model.Member) (id int64
 	if err != nil {
 		return
 	}
-	member.Id = id
-	s.memDao.KafkaPushMember(ctx, member)
+	member.ID = id
+	_ = s.memDao.KafkaPushMember(ctx, member)
 	return
 }
 
@@ -88,7 +90,7 @@ func (s *Service) DelMember(ctx context.Context, id int64) (err error) {
 }
 
 func (s *Service) addMerge(c context.Context, mid, kid int64) {
-	s.merge.Add(c, strconv.FormatInt(mid, 10), &model.Merge{
+	_ = s.merge.Add(c, strconv.FormatInt(mid, 10), &model.Merge{
 		Mid: mid,
 		Kid: kid,
 	})
@@ -107,9 +109,9 @@ func (s *Service) initMerge() {
 			}
 		}
 		spew.Dump("merge start:", values)
-		//log.Info("merges:%v" ,merges)
+		// log.Info("merges:%v" ,merges)
 		// demo 数据库操作最终入库
-		//s.dao.AddHistoryMessage(c, ch, merges)
+		// s.dao.AddHistoryMessage(c, ch, merges)
 	}
 	s.merge.Start()
 }

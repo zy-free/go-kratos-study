@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"time"
+
 	"go-kartos-study/app/bff/member/internal/model"
 	"go-kartos-study/pkg/log"
 	bm "go-kartos-study/pkg/net/http/blademaster"
-	"time"
 )
 
 func getMemberByID(c *bm.Context) {
@@ -57,7 +58,7 @@ func listMember(c *bm.Context) {
 func exportMember(c *bm.Context) {
 	resp, err := memSvc.ListMember(c, &model.ListMemberReq{Pn: 1, Ps: 10000})
 	if err != nil {
-		c.JSON(nil,err)
+		c.JSON(nil, err)
 		return
 	}
 
@@ -76,14 +77,13 @@ func exportMember(c *bm.Context) {
 	csvWriter := csv.NewWriter(buf)
 	err = csvWriter.WriteAll(data)
 	if err != nil {
-		c.JSON(nil,err)
+		c.JSON(nil, err)
 		return
 	}
 	c.CSV(bm.CSVMsg{
 		Content: buf.Bytes(),
-		Title:    fmt.Sprintf("%s-%s", time.Now().Format("2006-01-02"), "members"),
-	},nil)
-
+		Title:   fmt.Sprintf("%s-%s", time.Now().Format("2006-01-02"), "members"),
+	}, nil)
 }
 
 func addMember(c *bm.Context) {
@@ -115,7 +115,7 @@ func updateMember(c *bm.Context) {
 	if err := c.Bind(arg); err != nil {
 		return
 	}
-	log.Info("updateMember(%s)", arg)
+	log.Info("updateMember(%v)", arg)
 	c.JSON(nil, memSvc.UpdateMember(c, arg))
 }
 

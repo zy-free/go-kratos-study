@@ -1,5 +1,5 @@
 package appid
 
-const(
+const (
 	AppID = "member.service"
 )

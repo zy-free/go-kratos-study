@@ -6,7 +6,7 @@ import (
 )
 
 func (s *Server) AddFavorite(c context.Context, req *grpc.AddFavoriteReq) (resp *grpc.IDResp, err error) {
-	//s.dao.GetMemberByID()
+	// s.dao.GetMemberByID()
 	return
 }
 
@@ -17,8 +17,7 @@ func (s *Server) GetFavoriteByID(ctx context.Context, req *grpc.GetFavoriteByIDR
 	}
 
 	resp = &grpc.FavoriteResp{
-
-		Id:     fav.Id,
+		Id:     fav.ID,
 		Mid:    fav.Mid,
 		Name:   fav.Name,
 		HintAt: fav.HintAt.Time().Unix(),

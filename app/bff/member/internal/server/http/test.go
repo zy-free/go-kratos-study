@@ -3,12 +3,13 @@ package http
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"go-kartos-study/pkg/ecode"
 	bm "go-kartos-study/pkg/net/http/blademaster"
 	"go-kartos-study/pkg/net/trace"
 	"go-kartos-study/pkg/sync/errgroup"
 	"go-kartos-study/pkg/sync/goroutine"
-	"time"
 )
 
 // 验证grpc的error透传,直接将grpc的server端错误截获
@@ -36,7 +37,7 @@ func breakerTest(c *bm.Context) {
 	c.JSON(nil, testSvc.BreakerTest(c))
 }
 
-func errGroupTest(c *bm.Context){
+func errGroupTest(c *bm.Context) {
 	g := errgroup.WithContext(c)
 
 	// 总时长应该为2s
@@ -47,17 +48,17 @@ func errGroupTest(c *bm.Context){
 	})
 
 	g.Go(func(ctx context.Context) error {
-		time.Sleep(time.Second*2)
+		time.Sleep(time.Second * 2)
 		fmt.Println("errgroup go time sleep 2")
 		return nil
 	})
 
-	g.Wait()
+	_ = g.Wait()
 	c.JSON("ok", nil)
 }
 
 // 使用 WithCancel 时如果有一个人任务失败会导致所有*未进行或进行中*的任务被 cancel
-func errGroupWithCancelTest(c *bm.Context){
+func errGroupWithCancelTest(c *bm.Context) {
 	var err error
 	g := errgroup.WithCancel(c)
 
@@ -72,10 +73,8 @@ func errGroupWithCancelTest(c *bm.Context){
 	})
 
 	g.Go(func(ctx context.Context) error {
-		select {
-		case <-ctx.Done():
-			err = ctx.Err()
-		}
+		<-ctx.Done()
+		err = ctx.Err()
 		return err
 	})
 
@@ -83,20 +82,19 @@ func errGroupWithCancelTest(c *bm.Context){
 	c.JSON("ok", err)
 }
 
-func goSafeTest(c *bm.Context){
+func goSafeTest(c *bm.Context) {
 	goroutine.GoSafe(func() {
 		panic("test panic")
 	})
 	c.JSON("ok", nil)
 }
 
-func httpClientTest(c *bm.Context){
-	c.JSON(nil, testSvc.HttpClientTest(c))
+func httpClientTest(c *bm.Context) {
+	c.JSON(nil, testSvc.HTTPClientTest(c))
 }
 
-
-func cancelTest(c *bm.Context){
-	ctx,cancel := context.WithCancel(c)
+func cancelTest(c *bm.Context) {
+	ctx, cancel := context.WithCancel(c)
 	cancel()
 	c.JSON(nil, testSvc.GrpcErrorTest(ctx))
 }

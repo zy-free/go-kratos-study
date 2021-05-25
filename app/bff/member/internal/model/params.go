@@ -9,7 +9,7 @@ type Page struct {
 }
 
 type GetMemberByIDReq struct {
-	Id int64 `form:"id" validate:"required"`
+	ID int64 `form:"id" validate:"required"`
 }
 
 type GetMemberByPhoneReq struct {
@@ -58,7 +58,7 @@ type InitMemberReq struct {
 	Phone   string `json:"phone"`
 	Name    string `json:"name"`
 	Age     int64  `json:"age" default:"-1"`
-	Address string `json:"address,optional"`
+	Address string `json:"address"`
 }
 
 type InitMemberResp struct {
@@ -97,7 +97,7 @@ type DelMemberReq struct {
 }
 
 type GetFavoriteByIDReq struct {
-	Id int64 `form:"id" validate:"required"`
+	ID int64 `form:"id" validate:"required"`
 }
 type GetFavoriteResp struct {
 	Favorite

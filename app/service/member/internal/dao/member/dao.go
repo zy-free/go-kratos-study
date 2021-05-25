@@ -3,7 +3,9 @@ package member
 import (
 	"context"
 	"fmt"
-	"go-kartos-study/app/service/member/conf"
+
+	"golang.org/x/sync/singleflight"
+
 	"go-kartos-study/app/service/member/internal/model"
 	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/database/sql"
@@ -11,12 +13,10 @@ import (
 	"go-kartos-study/pkg/queue/kafka"
 	"go-kartos-study/pkg/stat/prom"
 	"go-kartos-study/pkg/sync/pipeline/fanout"
-	"golang.org/x/sync/singleflight"
 )
 
 // Dao is redis dao.
 type Dao struct {
-	c                 *conf.Config
 	db                *sql.DB
 	redis             *redis.Pool
 	cacheSingleFlight *singleflight.Group
@@ -74,7 +74,7 @@ func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (res *model.Member,
 		err = nil
 	}
 	defer func() {
-		if res != nil && res.Id == -1 {
+		if res != nil && res.ID == -1 {
 			res = nil
 		}
 	}()
@@ -100,16 +100,16 @@ func (dao *Dao) GetMemberByID(ctx context.Context, id int64) (res *model.Member,
 	res = rr.(*model.Member)
 	miss := res
 	if miss == nil {
-		miss = &model.Member{Id: -1}
+		miss = &model.Member{ID: -1}
 	}
 	if !addCache {
 		return
 	}
 	// fanout模式
-	dao.cache.Do(ctx, func(ctx context.Context) {
+	_ = dao.cache.Do(ctx, func(ctx context.Context) {
 		_ = dao.cacheSetMember(ctx, id, miss)
 	})
-	return
+	return res, nil
 }
 
 func (dao *Dao) GetMemberByPhone(ctx context.Context, phone string) (m *model.Member, err error) {

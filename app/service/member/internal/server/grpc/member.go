@@ -7,14 +7,14 @@ import (
 )
 
 func (s *Server) GetMemberByID(ctx context.Context, req *grpc.GetMemberByIDReq) (resp *grpc.MemberResp, err error) {
-	member,err := s.svc.GetMemberByID(ctx,req.Id)
+	member, err := s.svc.GetMemberByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	resp = &grpc.MemberResp{
-		Member:&grpc.Member{
-			Id:        member.Id,
+		Member: &grpc.Member{
+			Id:        member.ID,
 			Phone:     member.Phone,
 			Name:      member.Name,
 			Age:       member.Age,
@@ -27,14 +27,14 @@ func (s *Server) GetMemberByID(ctx context.Context, req *grpc.GetMemberByIDReq) 
 }
 
 func (s *Server) GetMemberByPhone(ctx context.Context, req *grpc.GetMemberByPhoneReq) (resp *grpc.MemberResp, err error) {
-	member,err := s.svc.GetMemberByPhone(ctx,req.Phone)
+	member, err := s.svc.GetMemberByPhone(ctx, req.Phone)
 	if err != nil {
 		return nil, err
 	}
 
 	resp = &grpc.MemberResp{
-		Member:&grpc.Member{
-			Id:        member.Id,
+		Member: &grpc.Member{
+			Id:        member.ID,
 			Phone:     member.Phone,
 			Name:      member.Name,
 			Age:       member.Age,
@@ -74,7 +74,7 @@ func (s *Server) ListMember(ctx context.Context, req *grpc.ListMemberReq) (resp 
 	var mResp []*grpc.Member
 	for _, member := range members {
 		mResp = append(mResp, &grpc.Member{
-			Id:        member.Id,
+			Id:        member.ID,
 			Phone:     member.Phone,
 			Name:      member.Name,
 			Age:       member.Age,
@@ -89,7 +89,7 @@ func (s *Server) ListMember(ctx context.Context, req *grpc.ListMemberReq) (resp 
 }
 
 func (s *Server) QueryMemberByName(ctx context.Context, req *grpc.QueryMemberByNameReq) (resp *grpc.QueryMemberByNameResp, err error) {
-	members, err := s.svc.QueryMemberByName(ctx,req.Name)
+	members, err := s.svc.QueryMemberByName(ctx, req.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (s *Server) QueryMemberByName(ctx context.Context, req *grpc.QueryMemberByN
 	var mResp []*grpc.Member
 	for _, member := range members {
 		mResp = append(mResp, &grpc.Member{
-			Id:        member.Id,
+			Id:        member.ID,
 			Phone:     member.Phone,
 			Name:      member.Name,
 			Age:       member.Age,
@@ -112,7 +112,7 @@ func (s *Server) QueryMemberByName(ctx context.Context, req *grpc.QueryMemberByN
 }
 
 func (s *Server) QueryMemberByIDs(ctx context.Context, req *grpc.QueryMemberByIDsReq) (resp *grpc.QueryMemberByIDsResp, err error) {
-	members, err := s.svc.QueryMemberByIDs(ctx,req.Ids)
+	members, err := s.svc.QueryMemberByIDs(ctx, req.Ids)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (s *Server) QueryMemberByIDs(ctx context.Context, req *grpc.QueryMemberByID
 	mResp := make(map[int64]*grpc.Member)
 	for k, member := range members {
 		mResp[k] = &grpc.Member{
-			Id:        member.Id,
+			Id:        member.ID,
 			Phone:     member.Phone,
 			Name:      member.Name,
 			Age:       member.Age,
@@ -141,9 +141,9 @@ func (s *Server) AddMember(ctx context.Context, req *grpc.AddMemberReq) (resp *g
 		Address: req.Address,
 	}
 	// 业务端不关心，一定做好转化 分割字段，Get返回字段时同理
-	//m.AttrSet(model.MemAttrPublic,req.Public)
-	//m.AttrSet(model.MemAttrLocked,req.Locked)
-	id, err := s.svc.AddMember(ctx,m)
+	// m.AttrSet(model.MemAttrPublic,req.Public)
+	// m.AttrSet(model.MemAttrLocked,req.Locked)
+	id, err := s.svc.AddMember(ctx, m)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (s *Server) BatchAddMember(ctx context.Context, req *grpc.BatchAddMemberReq
 			Address: v.Address,
 		})
 	}
-	affectRow, err := s.svc.BatchAddMember(ctx,args)
+	affectRow, err := s.svc.BatchAddMember(ctx, args)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func (s *Server) BatchAddMember(ctx context.Context, req *grpc.BatchAddMemberReq
 }
 
 func (s *Server) InitMember(ctx context.Context, req *grpc.InitMemberReq) (resp *grpc.EmptyResp, err error) {
-	err = s.svc.InitMember(ctx,&model.Member{
+	err = s.svc.InitMember(ctx, &model.Member{
 		Phone:   req.Phone,
 		Name:    req.Name,
 		Age:     req.Age,
@@ -184,7 +184,7 @@ func (s *Server) InitMember(ctx context.Context, req *grpc.InitMemberReq) (resp 
 }
 
 func (s *Server) DeleteMember(ctx context.Context, req *grpc.DeleteMemberReq) (resp *grpc.EmptyResp, err error) {
-	err = s.svc.DelMember(ctx,req.Id)
+	err = s.svc.DelMember(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -192,8 +192,8 @@ func (s *Server) DeleteMember(ctx context.Context, req *grpc.DeleteMemberReq) (r
 }
 
 func (s *Server) SetMember(ctx context.Context, req *grpc.SetMemberReq) (resp *grpc.EmptyResp, err error) {
-	err = s.svc.SetMember(ctx,&model.Member{
-		Id:      req.Id,
+	err = s.svc.SetMember(ctx, &model.Member{
+		ID:      req.Id,
 		Phone:   req.Phone,
 		Name:    req.Name,
 		Age:     req.Age,
@@ -203,8 +203,8 @@ func (s *Server) SetMember(ctx context.Context, req *grpc.SetMemberReq) (resp *g
 }
 
 func (s *Server) UpdateMember(ctx context.Context, req *grpc.UpdateMemberReq) (resp *grpc.EmptyResp, err error) {
-	err = s.svc.UpdateMember(ctx,&model.Member{
-		Id:      req.Id,
+	err = s.svc.UpdateMember(ctx, &model.Member{
+		ID:      req.Id,
 		Phone:   req.Phone,
 		Name:    req.Name,
 		Age:     req.Age,
@@ -216,8 +216,8 @@ func (s *Server) UpdateMember(ctx context.Context, req *grpc.UpdateMemberReq) (r
 func (s *Server) SortMember(ctx context.Context, in *grpc.SortMemberReq) (resp *grpc.EmptyResp, err error) {
 	var args model.ArgMemberSort
 	for _, v := range in.SortMember {
-		args = append(args,model.MemberSort{Id: v.Id, OrderNum: v.OrderNum})
+		args = append(args, model.MemberSort{ID: v.Id, OrderNum: v.OrderNum})
 	}
-	err = s.svc.SortMember(ctx,args)
+	err = s.svc.SortMember(ctx, args)
 	return &grpc.EmptyResp{}, err
 }

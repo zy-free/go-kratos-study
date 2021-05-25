@@ -15,11 +15,11 @@ type Service struct {
 }
 
 // New init service.
-func New(favDao *favorite.Dao, memDao *member.Dao,merge  *pipeline.Pipeline) (s *Service) {
+func New(favDao *favorite.Dao, memDao *member.Dao, merge *pipeline.Pipeline) (s *Service) {
 	s = &Service{
 		favDao: favDao,
 		memDao: memDao,
-		merge: merge,
+		merge:  merge,
 	}
 	s.initMerge()
 	return s
@@ -33,7 +33,7 @@ func (s *Service) Close() {
 
 // Ping service
 func (s *Service) Ping(c context.Context) (err error) {
-	s.favDao.Ping(c)
-	s.memDao.Ping(c)
+	_ = s.favDao.Ping(c)
+	_ = s.memDao.Ping(c)
 	return
 }

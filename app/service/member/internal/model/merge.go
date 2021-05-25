@@ -7,4 +7,3 @@ type Merge struct {
 	// business 业务
 	Business string `json:"-"`
 }
-

@@ -10,18 +10,18 @@ import (
 )
 
 var (
-	favSvc  *favorite.Service
-	memSvc  *member.Service
+	favSvc *favorite.Service
+	memSvc *member.Service
 )
 
-//CloseService close all service
+// CloseService close all service
 func CloseService() {
 	favSvc.Close()
 	memSvc.Close()
 }
 
 // Init http.
-func Init(c *bm.ServerConfig,fav *favorite.Service,mem  *member.Service) (err error){
+func Init(c *bm.ServerConfig, fav *favorite.Service, mem *member.Service) (err error) {
 	favSvc = fav
 	memSvc = mem
 
@@ -49,18 +49,18 @@ func route(e *bm.Engine) {
 		memGroup := g.Group("/members")
 		{
 			memGroup.GET("/info/getById", getMemberByID)
-			//memGroup.GET("/info/getByPhone", getMemberByPhone)
-			//memGroup.GET("/maxAge", getMemberMaxAge)
-			//memGroup.GET("/queryByName", queryMemberByName)
-			//memGroup.GET("/queryByIds", queryMemberByIDs)
-			//memGroup.GET("/list", listMember)
-			//memGroup.GET("/export", exportMember)
+			// memGroup.GET("/info/getByPhone", getMemberByPhone)
+			// memGroup.GET("/maxAge", getMemberMaxAge)
+			// memGroup.GET("/queryByName", queryMemberByName)
+			// memGroup.GET("/queryByIds", queryMemberByIDs)
+			// memGroup.GET("/list", listMember)
+			// memGroup.GET("/export", exportMember)
 			memGroup.POST("", addMember)
 			memGroup.POST("/batch", batchAddMember)
 			memGroup.PUT("/update", updateMember)
-			//memGroup.PUT("/set", setMember)
-			//memGroup.PUT("/sort", sortMember)
-			//memGroup.DELETE("/del", delMember)
+			// memGroup.PUT("/set", setMember)
+			// memGroup.PUT("/sort", sortMember)
+			// memGroup.DELETE("/del", delMember)
 		}
 
 		favGroup := g.Group("/favorites")

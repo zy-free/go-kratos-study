@@ -1,13 +1,14 @@
 package http
 
 import (
+	"net/http"
+
 	"go-kartos-study/app/bff/member/internal/service/favorite"
 	"go-kartos-study/app/bff/member/internal/service/member"
 	"go-kartos-study/app/bff/member/internal/service/test"
 	"go-kartos-study/pkg/log"
 	bm "go-kartos-study/pkg/net/http/blademaster"
 	nmd "go-kartos-study/pkg/net/metadata"
-	"net/http"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 	testSvc *test.Service
 )
 
-//CloseService close all service
+// CloseService close all service
 func CloseService() {
 	favSvc.Close()
 	memSvc.Close()
@@ -24,7 +25,7 @@ func CloseService() {
 }
 
 // Init http.
-func Init(c *bm.ServerConfig, fav *favorite.Service, mem *member.Service, test *test.Service)(err error) {
+func Init(c *bm.ServerConfig, fav *favorite.Service, mem *member.Service, test *test.Service) (err error) {
 	favSvc = fav
 	memSvc = mem
 	testSvc = test

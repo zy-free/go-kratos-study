@@ -2,7 +2,9 @@ package conf
 
 import (
 	"flag"
+
 	"github.com/BurntSushi/toml"
+
 	"go-kartos-study/pkg/cache/redis"
 	"go-kartos-study/pkg/database/sql"
 	"go-kartos-study/pkg/log"
@@ -23,12 +25,12 @@ var (
 
 // Config config set
 type Config struct {
-	Log    *log.Config
-	Tracer *trace.Config
-	Mysql  *sql.Config
-	Redis  *redis.Config
-	Merge  *pipeline.Config
-	KafkaPublish  *kafka.PublishConfig
+	Log          *log.Config
+	Tracer       *trace.Config
+	Mysql        *sql.Config
+	Redis        *redis.Config
+	Merge        *pipeline.Config
+	KafkaPublish *kafka.PublishConfig
 
 	GRPCServer *warden.ServerConfig
 	HTTPServer *bm.ServerConfig

@@ -11,14 +11,13 @@ type Server struct {
 }
 
 // New
-func New(c *warden.ServerConfig,svc *service.Service) *warden.Server {
+func New(c *warden.ServerConfig, svc *service.Service) *warden.Server {
 	ws := warden.NewServer(c)
 
-	grpc.RegisterMemberRPCServer(ws.Server(), &Server{svc:svc})
+	grpc.RegisterMemberRPCServer(ws.Server(), &Server{svc: svc})
 	ws, err := ws.Start()
 	if err != nil {
 		panic(err)
 	}
 	return ws
 }
-

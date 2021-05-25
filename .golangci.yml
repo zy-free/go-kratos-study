@@ -36,8 +36,7 @@ linters-settings:
   gocyclo:
     min-complexity: 100
 
-
-:
+linters:
   disable-all: true
   enable:
     #  https://golangci-lint.run/usage/configuration/

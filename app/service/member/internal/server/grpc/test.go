@@ -2,7 +2,9 @@ package grpc
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
+
 	"go-kartos-study/app/service/member/api/grpc"
 	"go-kartos-study/pkg/ecode"
 	"go-kartos-study/pkg/log"
@@ -15,6 +17,6 @@ func (s *Server) ErrorTest(c context.Context, in *grpc.EmptyReq) (resp *grpc.Emp
 }
 
 func (s *Server) MetadataTest(c context.Context, in *grpc.EmptyReq) (resp *grpc.EmptyResp, err error) {
-	log.Info("mid:%s-----color:%s",metadata.String(c,metadata.Mid),metadata.String(c,metadata.Color))
-	return &grpc.EmptyResp{},nil
+	log.Info("mid:%s-----color:%s", metadata.String(c, metadata.Mid), metadata.String(c, metadata.Color))
+	return &grpc.EmptyResp{}, nil
 }

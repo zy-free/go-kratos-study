@@ -9,7 +9,7 @@ type Page struct {
 }
 
 type GetMemberByIDReq struct {
-	Id int64 `form:"id" validate:"required"`
+	ID int64 `form:"id" validate:"required"`
 }
 
 type GetMemberByPhoneReq struct {
@@ -94,7 +94,7 @@ type DelMemberReq struct {
 }
 
 type GetFavoriteByIDReq struct {
-	Id int64 `form:"id" validate:"required"`
+	ID int64 `form:"id" validate:"required"`
 }
 type GetFavoriteResp struct {
 	Favorite
@@ -109,7 +109,7 @@ type AddFavoriteResp struct {
 }
 
 type MemberSort struct {
-	Id       int64 `db:"id"`
+	ID       int64 `db:"id"`
 	OrderNum int64 `db:"order_num"`
 }
 type ArgMemberSort []MemberSort
