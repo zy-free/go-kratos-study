@@ -22,7 +22,6 @@ kratos学习项目
     - [ ] restful路由支持(:id，path参数支持重复)(gin issue:Add mixed param and non-param paths)
     - [ ] Beanstalkd?
     - [ ] canal,发送kafka,异步删除缓存
-    - [ ] golangci检测
     
 - grpc功能实现
     - [x] etcd注册
@@ -35,6 +34,7 @@ kratos学习项目
     - [x] trace
     
 - demo
+    - [x] golangci检测
     - [x] admin+gorm(share db架构,运营平台微服务共享db，只是权限不同)
     - [x] service+mysql
     - [x] job+kafka
